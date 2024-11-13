@@ -39,7 +39,7 @@
     `define SPECIAL_CODE_K30_7_10B 10'b10_0001_0111
 
 
-   // --- Valid data code-groups: Códigos de Datos en 8 y 10 bits (Current RD-) ---
+   // --- Valid data code-groups: Códigos de Datos en 8 y 10 bits (Current RD-) ---, el primer /I/ tiene disparidad negativa,
     `define DATA_CODE_D00_0_8B 8'h00
     `define DATA_CODE_D00_0_10B 10'b10_0111_0100  
 
