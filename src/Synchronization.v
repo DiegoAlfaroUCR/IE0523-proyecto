@@ -11,6 +11,8 @@
  * MIT License
  */
 
+`include "tablas.v"
+
 /* ++++++++++++++++++++ Definiciones constantes ++++++++++++++++++++ */
     `define TRUE    1'b1
     `define FALSE   1'b0
@@ -31,7 +33,7 @@ module Synchronization(
 
 /* ++++++++++++++++++++++++ Asignación de registros internos ++++++++++++++++++++++++ */
     // Vectores de estado presente y de próximo estado
-    reg [6:0] State, next_State;
+    reg [10:0] State, next_State;
 
     // rx_even
     reg rx_even, next_rx_even;
@@ -49,34 +51,38 @@ module Synchronization(
     assign cggood = !(PUDI_INVALID | PUDI_COMMA & rx_even);
 
 /* ++++++++++++++++++++++++++++ Determinación de PUDI ++++++++++++++++++++++++++++++ */
-always @(*) begin
-    case (PUDI)     // COMMA
-        10'b0000000000: PUDI_COMMA = `TRUE;
-        default: PUDI_COMMA = `FALSE;
-    endcase
+    always @(*) begin
+        case (PUDI)     // COMMA
+            10'b0000000000: PUDI_COMMA = `TRUE;
+            default: PUDI_COMMA = `FALSE;
+        endcase
 
-    case (PUDI)     // /D/
-        10'b0000000000: PUDI_D = `TRUE;
-        default: PUDI_D = `FALSE;
-    endcase
+        case (PUDI)     // /D/
+            10'b0000000000: PUDI_D = `TRUE;
+            default: PUDI_D = `FALSE;
+        endcase
 
-    case (PUDI)     // /INVALID/
-        10'b0000000000: PUDI_INVALID = `TRUE;
-        default: PUDI_INVALID = `FALSE;
-    endcase
-end
+        case (PUDI)     // /INVALID/
+            10'b0000000000: PUDI_INVALID = `TRUE;
+            default: PUDI_INVALID = `FALSE;
+        endcase
+    end
+
+    // To do: Probar un solo case con todos los códigos disponibles.
 
 /* +++++++++++++++++++++++++++++ Asignación de estados ++++++++++++++++++++++++++++++ */
-    localparam [8:0]
-        LOSS_OF_SYNC     = 9'b000000001,
-        COMMA_DETECT_1   = 9'b000000010,
-        ACQUIRE_SYNC_1   = 9'b000000100,
-        COMMA_DETECT_2   = 9'b000001000,
-        ACQUIRE_SYNC_2   = 9'b000010000,
-        COMMA_DETECT_3   = 9'b000100000,
-        SYNC_ACQUIRED_1  = 9'b001000000,
-        SYNC_ACQUIRED_2  = 9'b010000000,
-        SYNC_ACQUIRED_2A = 9'b100000000;
+    localparam [10:0]
+        LOSS_OF_SYNC     = 11'b00000000001,
+        COMMA_DETECT_1   = 11'b00000000010,
+        ACQUIRE_SYNC_1   = 11'b00000000100,
+        COMMA_DETECT_2   = 11'b00000001000,
+        ACQUIRE_SYNC_2   = 11'b00000010000,
+        COMMA_DETECT_3   = 11'b00000100000,
+        SYNC_ACQUIRED_1  = 11'b00001000000,
+        SYNC_ACQUIRED_2  = 11'b00010000000,
+        SYNC_ACQUIRED_2A = 11'b00100000000,
+        SYNC_ACQUIRED_3  = 11'b01000000000,
+        SYNC_ACQUIRED_3A = 11'b10000000000;
 
 /* +++++++++++++++++++++++++++++ Definición de Flip Flops +++++++++++++++++++++++++++ */
     always @(posedge Clk) begin
@@ -106,6 +112,83 @@ end
 
     // Lógica combinacional según el estado presente.
     case (State)
+        LOSS_OF_SYNC: begin
+            next_code_sync_status = `FAIL;
+            next_rx_even = ~rx_even;
+            if(PUDI_COMMA) next_State = COMMA_DETECT_1;
+        end
+
+        COMMA_DETECT_1: begin
+            next_rx_even = `TRUE;
+            if(PUDI_D) next_State = ACQUIRE_SYNC_1;
+            else next_State = LOSS_OF_SYNC;
+        end
+
+        ACQUIRE_SYNC_1: begin
+            next_rx_even = ~rx_even;
+            if(PUDI_COMMA & ~rx_even) next_State = COMMA_DETECT_2;
+            else if (~cggood) next_State = LOSS_OF_SYNC;
+            // Siguiente if no es necesario pues no se actualiza el State
+            // else if (~PUDI_COMMA & ~PUDI_INVALID) next_State = ACQUIRE_SYNC_1;
+        end
+
+        COMMA_DETECT_2: begin
+            next_rx_even = `TRUE;
+            if(PUDI_D) next_State = ACQUIRE_SYNC_2;
+            else next_State = LOSS_OF_SYNC;
+        end
+
+        ACQUIRE_SYNC_2: begin
+            next_rx_even = ~rx_even;
+            if(PUDI_COMMA & ~rx_even) next_State = COMMA_DETECT_3;
+            else if (~cggood) next_State = LOSS_OF_SYNC;
+            // else if (~PUDI_COMMA & ~PUDI_INVALID) next_State = ACQUIRE_SYNC_2;
+        end
+
+        COMMA_DETECT_3: begin
+            next_rx_even = `TRUE;
+            if(PUDI_D) next_State = SYNC_ACQUIRED_1;
+            else next_State = LOSS_OF_SYNC;
+        end
+
+        SYNC_ACQUIRED_1: begin
+            next_code_sync_status = `TRUE;
+            next_rx_even = ~rx_even;
+            if(~cggood) next_State = SYNC_ACQUIRED_2;
+        end
+
+        SYNC_ACQUIRED_2: begin
+            next_rx_even = ~rx_even;
+            next_good_cgs = 2'b0;
+            if(cggood) next_State = SYNC_ACQUIRED_2A;
+            else next_State = SYNC_ACQUIRED_3;
+        end
+
+        SYNC_ACQUIRED_2A: begin
+            next_rx_even = ~rx_even;
+            next_good_cgs = good_cgs + 1;
+            // REVISAR SI DEBO REVISAR QUE SEA 2 O 3
+            if(cggood & good_cgs == 2'd3) next_State = SYNC_ACQUIRED_1;
+            else if (cggood & good_cgs != 2'd3) next_State = SYNC_ACQUIRED_2A;
+            else if (~cggood) next_State = SYNC_ACQUIRED_3;
+        end
+
+        SYNC_ACQUIRED_3: begin
+            next_rx_even = ~rx_even;
+            next_good_cgs = 2'b0;
+            if(cggood) next_State = SYNC_ACQUIRED_3A;
+            else next_State = LOSS_OF_SYNC;
+        end
+
+        SYNC_ACQUIRED_3A: begin
+            next_rx_even = ~rx_even;
+            next_good_cgs = good_cgs + 1;
+            // REVISAR SI DEBO REVISAR QUE SEA 2 O 3
+            if(cggood & good_cgs == 2'd3) next_State = SYNC_ACQUIRED_2;
+            else if (cggood & good_cgs != 2'd3) next_State = SYNC_ACQUIRED_3A;
+            else if (~cggood) next_State = LOSS_OF_SYNC;
+        end
+
         default: next_State = LOSS_OF_SYNC;
     endcase
     end
