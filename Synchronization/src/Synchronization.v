@@ -69,7 +69,7 @@ module Synchronization(
     always @(posedge Clk) begin
         if (mr_main_reset || power_on)  begin
             State            <= LOSS_OF_SYNC;
-            good_cgs         <= 2'b0;
+            prev_good_cgs    <= 2'b0;
             rx_even          <= `FALSE;     // Se define para que no sea X, pero es irrelevante.
             code_sync_status <= `FAIL;
         end
