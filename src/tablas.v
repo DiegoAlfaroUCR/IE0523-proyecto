@@ -47,7 +47,7 @@
     `define DATA_CODE_D01_0_10B 10'b100010_1011 
 
     `define DATA_CODE_D02_0_8B 8'h02
-    `define DATA_CODE_D02_0_10B 10'b010010 1011
+    `define DATA_CODE_D02_0_10B 10'b010010_1011
 
     `define DATA_CODE_D03_0_8B 8'h03
     `define DATA_CODE_D03_0_10B 10'b110001_0100  
