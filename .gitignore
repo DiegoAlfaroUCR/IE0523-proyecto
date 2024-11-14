@@ -1,0 +1,7 @@
+# Executable
+*.out
+
+# Wave file
+*.vcd
+*.vcd.pdf
+*.gtkw
