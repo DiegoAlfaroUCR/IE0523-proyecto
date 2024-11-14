@@ -11,7 +11,7 @@
  * MIT License
  */
 
-`include "tablas.v"
+`include "IdentPUDI.v"
 
 /* ++++++++++++++++++++ Definiciones constantes ++++++++++++++++++++ */
     `define TRUE    1'b1
