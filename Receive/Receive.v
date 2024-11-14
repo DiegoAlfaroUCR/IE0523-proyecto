@@ -132,8 +132,14 @@ module Receive (
                 check_end = {last_three_codes[2], last_three_codes[1], last_three_codes[0]};  // Concatenar las últimas tres señales
                 if (check_end == check_end_code)  // Verifica si coinciden con el patrón final
                     next_state = TRI_RR;  // Si coincide, transita al estado TRI_RR
+                else
+                    next_state = RX_DATA;
             end
+            RX_DATA: begin 
+                RXD = DECODE(SUDI_RX_Code);
+                next_state = RECEIVE;
 
+            end
             TRI_RR: begin
                 next_state = RX_K;  // Regresa al estado RX_K
             end
