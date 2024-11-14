@@ -56,9 +56,6 @@
     `define DATA_CODE_D03_0_8B 8'h03
     `define DATA_CODE_D03_0_10B 10'b11_0001_1011  
 
-    `define DATA_CODE_D02_2_8B 8'h42
-    `define DATA_CODE_D02_2_10B 10'b10_1101_0101 
-
     `define DATA_CODE_D16_2_8B 8'h50
     `define DATA_CODE_D16_2_10B 10'b01_1011_0101 
 

@@ -9,6 +9,34 @@ module Receive (
     output reg RX_ER,
     output reg [7:0] RXD
 );
+function [7:0] DECODE;
+    input [9:0] SUDI_RX_CODE; 
+    case(SUDI_RX_CODE)    
+    `SPECIAL_CODE_K28_0_10B:  DECODE = `SPECIAL_CODE_K28_0_8B;   
+    `SPECIAL_CODE_K28_1_10B:  DECODE = `SPECIAL_CODE_K28_1_8B;  
+    `SPECIAL_CODE_K28_2_10B:  DECODE = `SPECIAL_CODE_K28_2_8B;  
+    `SPECIAL_CODE_K28_3_10B:  DECODE = `SPECIAL_CODE_K28_3_8B;  
+    `SPECIAL_CODE_K28_4_10B:  DECODE = `SPECIAL_CODE_K28_4_8B;    
+    `SPECIAL_CODE_K28_5_10B:  DECODE = `SPECIAL_CODE_K28_5_8B;   
+    `SPECIAL_CODE_K28_6_10B:  DECODE = `SPECIAL_CODE_K28_6_8B;  
+    `SPECIAL_CODE_K28_7_10B:  DECODE = `SPECIAL_CODE_K28_7_8B;      
+    `SPECIAL_CODE_K23_7_10B:  DECODE = `SPECIAL_CODE_K23_7_8B;   
+    `SPECIAL_CODE_K27_7_10B:  DECODE = `SPECIAL_CODE_K27_7_8B;  
+    `SPECIAL_CODE_K29_7_10B:  DECODE = `SPECIAL_CODE_K29_7_8B;  
+    `SPECIAL_CODE_K30_7_10B:  DECODE = `SPECIAL_CODE_K30_7_8B; 
+
+    `DATA_CODE_D00_0_10B:  DECODE = `DATA_CODE_D00_0_8B;  
+    `DATA_CODE_D01_0_10B:  DECODE = `DATA_CODE_D01_0_8B;
+    `DATA_CODE_D02_0_10B:  DECODE = `DATA_CODE_D02_0_8B;
+    `DATA_CODE_D02_2_10B:  DECODE = `DATA_CODE_D02_2_8B;
+    `DATA_CODE_D03_0_10B:  DECODE = `DATA_CODE_D03_0_8B;
+    `DATA_CODE_D16_2_10B:  DECODE = `DATA_CODE_D16_2_8B;
+    `DATA_CODE_D26_4_10B:  DECODE = `DATA_CODE_D26_4_8B;
+    `DATA_CODE_D06_5_10B:  DECODE = `DATA_CODE_D06_5_8B;
+    `DATA_CODE_D21_5_10B:  DECODE = `DATA_CODE_D21_5_8B;
+    `DATA_CODE_D05_6_10B:  DECODE = `DATA_CODE_D05_6_8B;
+   endcase
+endfunction
 
     localparam LINK_FAILED  = 8'b00000001;
     localparam WAIT_K       = 8'b00000010;
@@ -23,7 +51,7 @@ module Receive (
 
     wire [9:0] SUDI_RX_Code;
     wire RX_even;
-
+    reg [29:0] check_end;
     assign SUDI_RX_Code = SUDI[10:1];
     assign RX_even = SUDI[0];
 
@@ -93,6 +121,7 @@ always @(*) begin
             next_state = RECEIVE;
         end
         RECEIVE: begin  // FAlTA implementar la decoficicacion
+            check_end  = {last_three_codes[2], last_three_codes[1], last_three_codes[0]};
             if (check_end == check_end_code)
                 next_state = TRI_RR;
         end
