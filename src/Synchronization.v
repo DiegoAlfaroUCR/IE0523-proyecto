@@ -69,6 +69,10 @@ module Synchronization(
     end
 
     // To do: Probar un solo case con todos los códigos disponibles.
+    // case (PUDI)
+    //     :
+    //     default: PUDI_INVALID = `TRUE;
+    // endcase
 
 /* +++++++++++++++++++++++++++++ Asignación de estados ++++++++++++++++++++++++++++++ */
     localparam [10:0]
@@ -86,7 +90,7 @@ module Synchronization(
 
 /* +++++++++++++++++++++++++++++ Definición de Flip Flops +++++++++++++++++++++++++++ */
     always @(posedge Clk) begin
-        if (mr_main_reset || mr_main_reset)  begin
+        if (power_on || mr_main_reset)  begin
             State            <= LOSS_OF_SYNC;
             good_cgs         <= 2'b0;
             rx_even          <= `FALSE;     // Se define para que no sea X, pero es irrelevante.
