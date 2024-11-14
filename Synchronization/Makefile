@@ -43,6 +43,7 @@ testbench.S1.good_cgs[1:0]
 testbench.S1.PUDI_COMMA
 testbench.S1.PUDI_D
 testbench.S1.PUDI_INVALID
+testbench.S1.rx_even
 @200
 -
 -Salidas

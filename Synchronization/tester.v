@@ -35,12 +35,43 @@ module tester(
             Clk = 0;
             mr_main_reset = 0;
             power_on = 0;
-            PUDI = 10'b000000_0000;
+            PUDI = `MALO;
 
             // Reset momentáneo al inicio para iniciar en estado
-            // #5 mr_main_reset = 1'b1;
+            #5 mr_main_reset = 1;
+            #10 mr_main_reset = 0;
 
-        // ++++++++++++++++++++ Prueba #1, Lectura ++++++++++++++++++++
+        // ++++++++++++++++++++ Prueba #1: Sincronización correcta ++++++++++++++++++++
+            #10 PUDI = `COMMA;
+            #10 PUDI = `D1;
+            #10 PUDI = `COMMA;
+            #10 PUDI = `D2;
+            #10 PUDI = `COMMA;
+            #10 PUDI = `D3;
+            #10 PUDI = `D1;
+            #10 PUDI = `D2;
+
+        // ++++++++++++++ Prueba #2: Desincronización y re sicnronización ++++++++++++++
+            #10 PUDI = `MALO;
+            #10 PUDI = `D1;
+            #10 PUDI = `D3;
+            #10 PUDI = `D2;
+            #10 PUDI = `D1;
+            #10 PUDI = `D3;
+
+        // +++++++++++++++++++ Prueba #3: Desincronización completa +++++++++++++++++++
+            #10 PUDI = `MALO;
+            #10 PUDI = `MALO;
+            #10 PUDI = `MALO;
+
+        // +++++++++++++++++++ Prueba #4: Sincronización incompleta +++++++++++++++++++
+            #10 PUDI = `COMMA;
+            #10 PUDI = `D1;
+            #10 PUDI = `COMMA;
+            #10 PUDI = `D2;
+            #10 PUDI = `COMMA;
+            #10 PUDI = `COMMA;
+            #10 PUDI = `COMMA;
 
             #20
         #5 $finish;
