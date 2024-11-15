@@ -18,7 +18,7 @@
 --------------------- MODULOS PARA PCS transmit ordered set  ---------------------
 ------------------------------------------------------------------------------------*/
 
-// Módulo VOID para decidir si se sustituye el código de grupo con /V/
+// Módulo VOID para decidir si se sustituye el código de grupo con /V/;
 module VOID (
     input [8:0] x_in,            // Código de grupo de entrada
     input TX_EN,              // Señal de habilitación de transmisión
@@ -69,6 +69,11 @@ module TRANSMIT_OS (
     output reg [9:0] PUDR // Grupo de código de transmisión
     );
 
+    // variables internas de TX ordered set
+    // wire xmit_change_out;
+    wire [8:0] tx_set_void;  // no va a cambiar porque no hay "errores"
+    reg [4:0] estado_actual;
+    reg [4:0] estado_siguiente;
     localparam XMIT_DATA           = 5'b00001;     
     localparam START_OF_PACKET     = 5'b00010; 
     localparam TX_PACKET           = 5'b00100;            
@@ -85,15 +90,8 @@ module TRANSMIT_OS (
         .VOID_OUT(tx_set_void)
     );
 
-    // variables internas de TX ordered set
-    // wire xmit_change_out;
-    wire [8:0] tx_set_void;
-    reg [4:0] estado_actual;
-    reg [4:0] estado_siguiente;
-
-
     always @(posedge GTX_CLK) begin
-        if (!mr_main_reset || (TX_OSET_indicate && !tx_even)) begin
+        if (!mr_main_reset) begin
             estado_actual <= XMIT_DATA;
             transmitting <= `FALSE;
         end else
@@ -105,26 +103,28 @@ module TRANSMIT_OS (
         estado_siguiente = estado_actual;
         
 
-        // implementación de la máquina de estados
-        // de acuerdo al diagrama ASM
+        // Máquina de estados
         case(estado_actual)
             // XMIT_DATA
             XMIT_DATA: begin
+                transmitting = `FALSE;
                 tx_o_set = `OS_I; // /I/
                 //transmitting = `TRUE;
-                if (!TX_EN && TX_OSET_indicate)
+                if (!TX_EN && TX_OSET_indicate) 
                     estado_siguiente = XMIT_DATA;
-                
+
                 if (TX_EN && !TX_ER && TX_OSET_indicate)
                     estado_siguiente = START_OF_PACKET;
+
             end
 
             // START_OF_PACKET
             START_OF_PACKET: begin
                 tx_o_set = `OS_S; // /S/
                 transmitting = `TRUE;
-
-                if (TX_OSET_indicate) estado_siguiente = TX_PACKET; // condicion de salto de estado
+                if (TX_OSET_indicate) begin
+                 estado_siguiente = TX_PACKET; // condicion de salto de estado
+                end
             end
 
             // TX_PACKET
@@ -134,16 +134,21 @@ module TRANSMIT_OS (
                     tx_o_set = tx_set_void; // VOID(/D/)   
                 end
 
-                if (!TX_EN && !TX_ER) estado_siguiente = END_OF_PACKET_NOEXT; // condicion de salto de estado
+                if (!TX_EN && !TX_ER) begin
+                    estado_siguiente = END_OF_PACKET_NOEXT; // condicion de salto de estado
+                end
             end
 
             // END_OF_PACKET_NOEXT
             END_OF_PACKET_NOEXT: begin
                 tx_o_set = `OS_T; // /T/
                 
-                if (!tx_even) transmitting = `FALSE;
-
-                if (TX_OSET_indicate) estado_siguiente = EPD2_NOEXT; // condicion de salto de estado
+                if (!tx_even) begin
+                transmitting = `FALSE;
+                end
+                if (TX_OSET_indicate) begin
+                    estado_siguiente = EPD2_NOEXT; // condicion de salto de estado
+                end
             end
 
             // Bloque de EPD2_NOEXT
@@ -152,12 +157,12 @@ module TRANSMIT_OS (
                 tx_o_set = `OS_R; // Toma el valor de /R/ (carrier extend)
 
                 if (!tx_even && TX_OSET_indicate) begin
-                    estado_siguiente = XMIT_DATA;
+                    estado_siguiente = XMIT_DATA; // salto a la etiqueta "A"
                 end 
             end
             // default
             default:
-                estado_siguiente = XMIT_DATA; // condicion de excepcion, salto al estado inicial
+                estado_siguiente = XMIT_DATA; 
         endcase
     end
 endmodule
@@ -245,13 +250,12 @@ ENCODE encoding (
     .code_group_8b_recibido(TXD),
     .code_group_10b(TXD_encoded)
     );
-    /* Estados son 4, pero el SPECIAL_GO, al usar la lógica de cambio
+    /* Estados son 4, pero el SPECIAL_GO, y DATA_GO; al usar la lógica de cambio
     de estado de GENERATE_CODE_GROUPS no era completamente necesario. 
     */
 
-    localparam GENERATE_CODE_GROUPS = 3'b001;
-    localparam IDLE_I2B = 3'b010;
-    localparam DATA_G0 = 3'b100;
+    localparam GENERATE_CODE_GROUPS = 2'b01;
+    localparam IDLE_I2B = 2'b10;
 
     always @(posedge GTX_CLK) begin
         if (!mr_main_reset) begin
@@ -272,91 +276,32 @@ ENCODE encoding (
                     tx_even = `TRUE;
                     PUDR = `SPECIAL_CODE_K28_5_10B; // /K28.5/
                     nxt_state = IDLE_I2B;
-                end
-
-                else if (tx_o_set == `OS_D) begin
-                    PUDR = `DATA_CODE_D00_0_10B;
-                    nxt_state = DATA_G0;
-                end
-
-                else if (tx_o_set == `OS_D) begin
-                    PUDR = `DATA_CODE_D01_0_10B;
-                    nxt_state = DATA_G0;
-                end
-
-                else if (tx_o_set == `OS_D) begin
-                    PUDR = `DATA_CODE_D02_0_10B;
-                    nxt_state = DATA_G0;
-                end
-
-                else if (tx_o_set == `OS_D) begin
-                    PUDR = `DATA_CODE_D03_0_10B;
-                    nxt_state = DATA_G0;
-                end
-
-                else if (tx_o_set == `OS_D) begin
-                    PUDR = `DATA_CODE_D02_2_10B; 
-                    nxt_state = DATA_G0;
-                end
-
-                else if (tx_o_set == `OS_D) begin
-                    PUDR = `DATA_CODE_D16_2_10B;  
-                    nxt_state = DATA_G0;
-                end
-
-                else if (tx_o_set == `OS_D) begin
-                    PUDR = `DATA_CODE_D26_4_10B;  
-                    nxt_state = DATA_G0;
-                end
-
-                else if (tx_o_set == `OS_D) begin
-                    PUDR = `DATA_CODE_D06_5_10B;  
-                    nxt_state = DATA_G0;
-                end
-
-                else if (tx_o_set == `OS_D) begin
-                    PUDR = `DATA_CODE_D21_5_10B;  
-                    nxt_state = DATA_G0;
-                end       
-
-                else if (tx_o_set == `OS_D) begin
-                    PUDR = `DATA_CODE_D05_6_10B; 
-                    nxt_state = DATA_G0;
-                end
-
-                    
-                else 
-                begin
+                end                    
+                
+                else begin
                     // Se pasa al estado SPECIAL_GO, pero no se crea un estado
                     // adicional, no es necesario
                     TX_OSET_indicate = `TRUE;
                     tx_even = !tx_even;
                         
-                    if (tx_o_set == `OS_R)
+                    if(tx_o_set == `OS_R)
                         PUDR = `SPECIAL_CODE_K23_7_10B; // /R/
-
-                    if (tx_o_set == `OS_S)
+                    
+                    if(tx_o_set == `OS_S)
                         PUDR = `SPECIAL_CODE_K27_7_10B; // /S/
 
-                    if (tx_o_set == `OS_T)
+                    if(tx_o_set == `OS_T)
                         PUDR = `SPECIAL_CODE_K29_7_10B; // /T/
 
-                    if (tx_o_set == `OS_V)
+                    if(tx_o_set == `OS_V)
                         PUDR = `SPECIAL_CODE_K30_7_10B; // /V/
-
-                    if (tx_o_set == `OS_D)
+                    // este es como el estado de DATA_GO
+                    if(tx_o_set == `OS_D)
                         PUDR = TXD_encoded; 
                 end
             end
 
-            //DATA_GO
-            DATA_G0: begin
-                PUDR = TXD_encoded;
-                TX_OSET_indicate = `TRUE;
-                tx_even = !tx_even;
-            end
-
-                // IDLE_I2B
+            // IDLE_I2B, pasar la segunda parte de IDLE en par
             IDLE_I2B: begin
                 tx_even = `FALSE;
                 TX_OSET_indicate = `TRUE;
@@ -371,8 +316,9 @@ endmodule
 
 
 
-
-//Modulo para instanciar transmit ordered set y transmit code-group
+/*-----------------------------------------------------------------------------
+------Modulo para instanciar transmit ordered set y transmit code-group--------
+-----------------------------------------------------------------------------*/
 
 module TRANSMIT (
     input mr_main_reset,

@@ -26,7 +26,7 @@ module tester_TX_OS (
         TX_OSET_indicate = 1;// Señal proveniente de la segunda maquina del transmisor
         tx_even = 1;// Señal proveniente de la segunda maquina del transmisor
         //Se inicializan las variables provenientes del GMII
-        TXD = 8'h00;
+        //TXD = 8'h00;
         TX_EN = 1'b0;
         TX_ER = 1'b0;
 
@@ -46,7 +46,7 @@ module tester_TX_OS (
         #2;
         TXD = 8'h03;
         #2;
-        TXD = 8'h43;
+        TXD = 8'h42;
         #2;
         TX_EN =1'b0; //Se desactiva enable
         #20;
