@@ -1,20 +1,20 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Fri Nov 15 08:13:15 2024
+[*] Fri Nov 15 10:12:55 2024
 [*]
 [dumpfile] "/home/edgarwsl/ucr/2S2024_G5/src/Resultados.vcd"
-[dumpfile_mtime] "Fri Nov 15 08:10:26 2024"
-[dumpfile_size] 3633
+[dumpfile_mtime] "Fri Nov 15 10:11:10 2024"
+[dumpfile_size] 3824
 [savefile] "/home/edgarwsl/ucr/2S2024_G5/src/ondas.gtkwave"
 [timestart] 0
 [size] 1664 846
-[pos] 328044 327878
-*-2.800994 18 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[pos] 393654 393629
+*-2.800994 13 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] testbench_TX_OS.
 [treeopen] testbench_TX_OS.Trans.
 [treeopen] testbench_TX_OS.Trans.code_group.
 [sst_width] 42
-[signals_width] 336
+[signals_width] 218
 [sst_expanded] 0
 [sst_vpaned_height] 308
 @28
@@ -23,26 +23,23 @@ testbench_TX_OS.GTX_CLK
 testbench_TX_OS.TXD[7:0]
 @28
 testbench_TX_OS.TX_EN
-testbench_TX_OS.TX_ER
-testbench_TX_OS.transmitting
 testbench_TX_OS.TX_OSET_indicate
+@29
+testbench_TX_OS.transmitting
+@28
 testbench_TX_OS.tx_even
-@200
--generales
 @22
 testbench_TX_OS.Trans.PUDR[9:0]
 @200
 -CG
-@28
+@22
 testbench_TX_OS.Trans.code_group.TXD_encoded[9:0]
 @24
-testbench_TX_OS.Trans.code_group.nxt_state[1:0]
 testbench_TX_OS.Trans.code_group.state[1:0]
 @200
 -OS
 @28
 testbench_TX_OS.Trans.ordered_set.estado_actual[4:0]
-testbench_TX_OS.Trans.ordered_set.estado_siguiente[4:0]
 @22
 testbench_TX_OS.Trans.ordered_set.tx_o_set[6:0]
 [pattern_trace] 1

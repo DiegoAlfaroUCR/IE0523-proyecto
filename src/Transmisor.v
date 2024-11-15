@@ -46,11 +46,6 @@ module VOID (
     end
 endmodule
 
-
-
-
-
-
 //Maquina de estados PCS transmit ordered set
 module TRANSMIT_OS (
     //Inputs
@@ -158,7 +153,8 @@ module TRANSMIT_OS (
 
                 if (!tx_even && TX_OSET_indicate) begin
                     estado_siguiente = XMIT_DATA; // salto a la etiqueta "A"
-                end 
+                end else
+                    estado_siguiente = XMIT_DATA; // Revisar bien
             end
             // default
             default:
@@ -297,7 +293,7 @@ ENCODE encoding (
                         PUDR = `SPECIAL_CODE_K30_7_10B; // /V/
                     // este es como el estado de DATA_GO
                     if(tx_o_set == `OS_D)
-                        PUDR = TXD_encoded; 
+                        PUDR = TXD_encoded;                 
                 end
             end
 
