@@ -32,13 +32,29 @@ module Tester_receptor (
 
         // Prueba de IDLE_D y transición a START_PACKET
         #10;
-        SUDI = {`SPECIAL_CODE_K27_7_10B, 1'b1};  // Otro código especial
+        SUDI = {`SPECIAL_CODE_K27_7_10B, 1'b1};  
 
         // Prueba de estado START_PACKET y transición a RECEIVE
-        #20;
+        #30;
         SUDI = {`DATA_CODE_D00_0_10B, 1'b1};  // Código de datos
-        #10;
+        #20;
         SUDI = {`DATA_CODE_D01_0_10B, 1'b1};  // Otro código de datos
+        #20;
+        SUDI = {`DATA_CODE_D02_0_10B, 1'b1};  // Otro código de datos
+        #20;
+        SUDI = {`DATA_CODE_D02_2_10B, 1'b1};  // Otro código de datos
+        #20;
+        SUDI = {`DATA_CODE_D03_0_10B, 1'b1};  // Otro código de datos
+        #20;
+        SUDI = {`DATA_CODE_D16_2_10B, 1'b1};  // Otro código de datos
+        #20;
+        SUDI = {`DATA_CODE_D26_4_10B, 1'b1};  // Otro código de datos
+        #20;
+        SUDI = {`DATA_CODE_D06_5_10B, 1'b1};  // Otro código de datos
+        #20;
+        SUDI = {`DATA_CODE_D21_5_10B, 1'b1};  // Otro código de datos
+        #20;
+        SUDI = {`DATA_CODE_D05_6_10B, 1'b1};  // Otro código de datos
 
         // Prueba de estado RECEIVE y verificación de patrón de fin
         #30;
