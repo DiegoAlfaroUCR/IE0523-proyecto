@@ -129,7 +129,7 @@ module Synchronization(
         end
 
         SYNC_ACQUIRED_1: begin
-            code_sync_status = `TRUE;
+            code_sync_status = `OK;
             rx_even = ~prev_rx_even;
             if(~cggood) next_State = SYNC_ACQUIRED_2;
         end
