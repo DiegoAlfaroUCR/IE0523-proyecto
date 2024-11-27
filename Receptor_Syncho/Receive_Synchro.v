@@ -1,6 +1,6 @@
-`include "Receive.v"
-`include "Synchronization.v"
-module moduleName (
+`include "src/Receive.v"
+`include "src/Synchronization.v"
+module Receptor_Synchro (
     input Clk,                      // Señal de reloj
     input mr_main_reset,            // Señal de reset
     input power_on,                 // Señal de encencido
@@ -12,8 +12,8 @@ module moduleName (
     wire sync_status;
     wire [10:0] SUDI;
     // Intanciar el Synchronizator
-    Synchronization syncrho (
-        .clk(clk),
+    Synchronization synchro (
+        .Clk(Clk),
         .mr_main_reset(mr_main_reset),
         .power_on(power_on),
         .PUDI(PUDI),
@@ -21,12 +21,12 @@ module moduleName (
         .SUDI(SUDI)
     );
     Receive receptor (
-        clk(clk),
-        reset(mr_main_reset),
-        sync_status(sync_status),
-        SUDI(SUDI),
-        RX_DV(RX_DV),
-        RXD(RXD)
+        .clk(Clk),
+        .reset(mr_main_reset),
+        .sync_status(sync_status),
+        .SUDI(SUDI),
+        .RX_DV(RX_DV),
+        .RXD(RXD)
     );
 
 

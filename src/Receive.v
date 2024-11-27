@@ -1,4 +1,4 @@
-`include "tablas.v"  // Incluir las definiciones de los códigos especiales
+`include "src/tablas.v"  // Incluir las definiciones de los códigos especiales
 
 module Receive (
     input clk,            // Señal de reloj
@@ -78,9 +78,9 @@ module Receive (
                 last_three_codes[2] <= last_three_codes[1];
                 last_three_codes[1] <= last_three_codes[0];
                 last_three_codes[0] <= SUDI_RX_Code;
-                check_end = {last_three_codes[2], last_three_codes[1], last_three_codes[0]};
             end
         end
+        check_end = {last_three_codes[2], last_three_codes[1], last_three_codes[0]};
     end
 
     // Lógica combinacional para determinar el siguiente estado y las señales de salida
