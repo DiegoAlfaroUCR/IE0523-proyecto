@@ -27,6 +27,7 @@ module tester(
     output reg mr_main_reset,            // Señal de reset
     output reg power_on,                 // Señal de encencido
     output reg [9:0] PUDI,               // Code group recibido del PMA
+    output reg PUDI_indicate,            // Señal de indicación de cambio de codegroup
     input code_sync_status,              // Estatus de sincronización
     input [10:0] SUDI);                  // Señal SUDI de salida, contiene el code group y rx_even
 
@@ -42,6 +43,7 @@ module tester(
             #10 mr_main_reset = 0;
 
         // ++++++++++++++++++++ Prueba #1: Sincronización correcta ++++++++++++++++++++
+            PUDI_indicate = 1;
             #10 PUDI = `COMMA;
             #10 PUDI = `D1;
             #10 PUDI = `COMMA;

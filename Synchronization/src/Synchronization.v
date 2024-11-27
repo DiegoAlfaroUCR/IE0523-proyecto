@@ -25,6 +25,7 @@ module Synchronization(
     input mr_main_reset,            // Señal de reset
     input power_on,                 // Señal de encencido
     input [9:0] PUDI,               // Code group recibido del PMA
+    input PUDI_indicate,            // Señal de indicación de cambio de PUDI
     output reg code_sync_status,    // Estatus de sincronización
     output reg [10:0] SUDI);        // Señal SUDI de salida, contiene el code group y rx_even
 
@@ -42,7 +43,7 @@ module Synchronization(
     reg [1:0] good_cgs, prev_good_cgs; // Contadores
 
     wire cggood;
-    assign cggood = !(PUDI_INVALID | PUDI_COMMA & rx_even);
+    assign cggood = !(PUDI_INVALID | PUDI_COMMA & rx_even) & PUDI_indicate;
 
 /* ++++++++++++++++++++++++++++ Determinación de PUDI ++++++++++++++++++++++++++++++ */
     wire PUDI_COMMA, PUDI_D, PUDI_INVALID;

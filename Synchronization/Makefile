@@ -10,8 +10,8 @@ endif
 define configuracionGTKW
 [timestart] 0
 [size] 1908 987
-[pos] 32767 32767
-*-1.678960 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[pos] 65503 65503
+*-5.112947 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] testbench.
 [sst_width] 42
 [signals_width] 190
@@ -23,7 +23,6 @@ define configuracionGTKW
 testbench.S1.Clk
 testbench.S1.power_on
 testbench.S1.mr_main_reset
-@29
 testbench.S1.PUDI[9:0]
 @200
 -
@@ -40,6 +39,7 @@ testbench.S1.good_cgs[1:0]
 @200
 -
 @28
+testbench.S1.PUDI_indicate
 testbench.S1.PUDI_COMMA
 testbench.S1.PUDI_D
 testbench.S1.PUDI_INVALID
