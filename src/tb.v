@@ -24,7 +24,7 @@ module tester_TX_OS (
     initial begin
         
         TX_OSET_indicate = 1;// Señal proveniente de la segunda maquina del transmisor
-        tx_even = 1;// Señal proveniente de la segunda maquina del transmisor
+        tx_even = 0;// Señal proveniente de la segunda maquina del transmisor
         //Se inicializan las variables provenientes del GMII
         //TXD = 8'h00;
         TX_EN = 1'b0;
@@ -36,11 +36,12 @@ module tester_TX_OS (
         mr_main_reset = 1'b1;
 
 
-        #10;
+        #11;
         TX_EN = 1'b1; //Se activa enable
+        #2;
         //Data a transmitir
         TXD = 8'h00;
-        #5;
+        #8;
         TXD = 8'h01;
         #2;
         TXD = 8'h9A;
@@ -48,6 +49,12 @@ module tester_TX_OS (
         TXD = 8'hB5;
         #2;
         TXD = 8'h42;
+        #2;
+        TXD = 8'h01;
+        #2;
+        TXD = 8'hB5;
+        #2;
+        TXD = 8'h9A;
         #2;
         TX_EN =1'b0; //Se desactiva enable
         #20;
@@ -78,6 +85,11 @@ module testbench_TX_OS;
         .tx_even(tx_even),
         .TXD(TXD[7:0])
     );
+    ENCODE encodiando (
+        .clk(GTX_CLK),
+        .reset(mr_main_reset)
+    );//
+
     TRANSMIT Trans (
         .GTX_CLK(GTX_CLK),
         .mr_main_reset(mr_main_reset),
