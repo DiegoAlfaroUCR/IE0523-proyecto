@@ -87,7 +87,7 @@ module TRANSMIT_OS (
     );
 
     always @(posedge GTX_CLK) begin
-        if (!mr_main_reset) begin
+        if (mr_main_reset) begin
             estado_actual <= XMIT_DATA;
             transmitting <= `FALSE;
         end else
@@ -198,7 +198,7 @@ module TRANSMIT_CG (
     localparam IDLE_I2B = 2'b10;
 
     always @(posedge GTX_CLK) begin
-        if (!mr_main_reset) begin
+        if (mr_main_reset) begin
             state <= GENERATE_CODE_GROUPS;
             TX_OSET_indicate <= `FALSE;
         end

@@ -5,9 +5,8 @@ module tester_TX_OS (
     output reg GTX_CLK,
     output reg [7:0] TXD,
     output reg TX_EN,
-    output reg TX_ER,
-   // output reg TX_OSET_indicate,
-    output reg tx_even);
+    output reg TX_ER);
+
 
     always begin
         GTX_CLK = 1'b0;
@@ -17,14 +16,7 @@ module tester_TX_OS (
     end
 
 
-    always @(posedge GTX_CLK) begin
-        tx_even = ~tx_even;
-    end
-
     initial begin
-
-        //TX_OSET_indicate = 1;// Señal proveniente de la segunda maquina del transmisor
-        tx_even = 0;// Señal proveniente de la segunda maquina del transmisor
         //Se inicializan las variables provenientes del GMII
         //TXD = 8'h00;
         TX_EN = 1'b0;
@@ -51,6 +43,10 @@ module tester_TX_OS (
         #2;
         TXD = 8'h42;
         #2;
+        TXD = 8'h02;
+        #2;
+        TXD = 8'h42;
+        #2;
         TXD = 8'h9A;
         #2;
         TXD = 8'hB5;
@@ -71,8 +67,6 @@ module testbench_TX_OS;
     wire [7:0] TXD;
     wire [9:0] tx_code_group;
     wire transmitting;
-    //wire TX_OSET_indicate;
-    wire tx_even;
 
     initial begin
         $dumpfile("Resultados.vcd");
@@ -84,8 +78,6 @@ module testbench_TX_OS;
         .mr_main_reset(mr_main_reset),
         .TX_EN(TX_EN),
         .TX_ER(TX_ER),
-        //.TX_OSET_indicate(TX_OSET_indicate),
-        .tx_even(tx_even),
         .TXD(TXD[7:0])
     );
     ENCODE encodiando (
@@ -98,8 +90,6 @@ module testbench_TX_OS;
         .mr_main_reset(mr_main_reset),
         .TX_EN(TX_EN),
         .TX_ER(TX_ER),
-       // .TX_OSET_indicate(TX_OSET_indicate),
-       // .tx_even(tx_even),
         .TXD(TXD[7:0]),
         .transmitting(transmitting)
     );
