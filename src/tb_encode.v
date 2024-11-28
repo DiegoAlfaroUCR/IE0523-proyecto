@@ -25,12 +25,12 @@ always #1 clk = ~clk; // Período de 10ns
 // Procedimiento de prueba
 initial begin
     // Inicializar señales
-    reset = 0;
+    reset = 1;
     code_group_8b_recibido = 8'b00000000; // Valor inicial de la entrada
 
     // Esperar al flanco positivo del reloj para reiniciar
     #2;
-    reset = 1; // Desactivar reset
+    reset = 0; // Desactivar reset
 
     // Prueba 1: D0.0
     #2 code_group_8b_recibido = 8'b00000000; // Ejemplo D0.0
