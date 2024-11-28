@@ -73,8 +73,8 @@ always @(*) begin
 end
 
 // Máquina de Estados (FSM)
-always @(posedge clk /*or negedge clk*/ or negedge reset) begin
-    if (~reset) begin
+always @(posedge clk /*or negedge clk or negedge reset*/) begin
+    if (reset) begin
         current_state <= RESET; // Comienza en el estado de reset
         running_disparity <= 1'b0; // Disparidad inicial en negativo
     end else begin

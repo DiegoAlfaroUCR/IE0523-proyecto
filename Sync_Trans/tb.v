@@ -1,4 +1,4 @@
-`include "Transmisor.v"
+`include "src/Transmisor.v"
 //Modulo probador
 module tester_TX_OS (
     output reg mr_main_reset,
@@ -10,9 +10,9 @@ module tester_TX_OS (
     output reg tx_even);
 
     always begin
-        GTX_CLK = 1'b0; 
+        GTX_CLK = 1'b0;
         #1;
-        GTX_CLK = 1'b1; 
+        GTX_CLK = 1'b1;
         #1;
     end
 
@@ -22,7 +22,7 @@ module tester_TX_OS (
     end
 
     initial begin
-        
+
         //TX_OSET_indicate = 1;// Señal proveniente de la segunda maquina del transmisor
         tx_even = 0;// Señal proveniente de la segunda maquina del transmisor
         //Se inicializan las variables provenientes del GMII
@@ -32,9 +32,9 @@ module tester_TX_OS (
         TXD = 8'h00;
 
         //Se hace reset
-        mr_main_reset = 1'b0; 
-        #2;
         mr_main_reset = 1'b1;
+        #2;
+        mr_main_reset = 1'b0;
 
 
         #10;

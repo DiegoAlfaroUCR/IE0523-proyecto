@@ -23,19 +23,17 @@
 // +++++++ Módulo tester +++++++
 
 module tester(
+    input code_sync_status,              // Estatus de sincronización
+    input [10:0] SUDI,                   // Señal SUDI de salida, contiene el code group y rx_even
+    input transmitting,                  // Indicación de transmisión del transmit
+    input [9:0] PUDR_PUDI,               // Comunicación en loopback  entre transmisor y sync
+
     output reg Clk,                      // Señal de reloj
     output reg mr_main_reset,            // Señal de reset
     output reg power_on,                 // Señal de encencido
-    output reg PUDI_indicate,            // Señal de indicación de cambio de codegroup
-    input code_sync_status,              // Estatus de sincronización
-    input [10:0] SUDI,                   // Señal SUDI de salida, contiene el code group y rx_even
-
-    output reg [7:0] TXD,
-    output reg TX_EN,
-    output reg TX_ER,
-    input transmitting,
-    input [9:0] PUDR_PUDI,
-    input TX_OSET_indicate
+    output reg [7:0] TXD,                // Datos a transmitir
+    output reg TX_EN,                    // Señal de enable para transmisor
+    output reg TX_ER                     // Señal de error para transmisor
     );
 
     initial begin
@@ -45,34 +43,33 @@ module tester(
             power_on = 0;
             TX_EN = 1'b0;
             TX_ER = 1'b0;
+            TXD = 8'h00;
 
             // Reset momentáneo al inicio para iniciar en estado
             #5 mr_main_reset = 1;
             #10 mr_main_reset = 0;
 
         // ++++++++++++++++++++ Prueba #1: Operación correcta ++++++++++++++++++++
-            TX_EN = 1'b1; //Se activa enable
-            #5;
-            //Data a transmitir
-            TXD = 8'h00;
-            #20;
+            #60
             TXD = 8'h01;
-            #5;
+            #10;
+            TXD = 8'h03;
+            #10;
             TXD = 8'h9A;
-            #5;
+            #10;
             TXD = 8'hB5;
-            #5;
+            #10;
             TXD = 8'h42;
-            #5;
-            TXD = 8'h01;
-            #5;
-            TXD = 8'hB5;
-            #5;
+            #10;
             TXD = 8'h9A;
-            #5;
+            #10;
+            TXD = 8'hB5;
+            #10;
+            TXD = 8'h01;
+            #10;
+            TXD = 8'hC5;
             TX_EN =1'b0; //Se desactiva enable
-            #50;
-
+            TXD = 8'h00;
             #50
         #5 $finish;
     end

@@ -203,7 +203,7 @@ module TRANSMIT_CG (
     localparam IDLE_I2B             = 4'b1000;
 
     always @(posedge GTX_CLK) begin
-        if (!mr_main_reset) begin
+        if (mr_main_reset) begin
             state <= GENERATE_CODE_GROUPS;
             TX_OSET_indicate <= `FALSE;
         end
@@ -270,7 +270,7 @@ endmodule
 
 module TRANSMIT (
     input mr_main_reset,
-    input Clk,
+    input GTX_CLK,
     input [7:0] TXD,
     input TX_EN,
     input TX_ER,
@@ -289,7 +289,7 @@ module TRANSMIT (
     TRANSMIT_OS ordered_set (
         // entradas de TX ordered set
         .mr_main_reset(mr_main_reset),
-        .GTX_CLK(Clk),
+        .GTX_CLK(GTX_CLK),
         .TXD(TXD[7:0]),
         .TX_EN(TX_EN),
         .TX_ER(TX_ER),
@@ -303,7 +303,7 @@ module TRANSMIT (
     TRANSMIT_CG code_group (
         // entradas de TX code group
         .mr_main_reset(mr_main_reset),
-        .GTX_CLK(Clk),
+        .GTX_CLK(GTX_CLK),
         .tx_o_set(tx_o_set),
         .TXD(TXD[7:0]),
         // salidas de TX code group
