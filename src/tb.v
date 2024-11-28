@@ -38,22 +38,24 @@ module tester_TX_OS (
 
         #10;
         TX_EN = 1'b1; //Se activa enable
-        #5;
+        #3;
         //Data a transmitir
         TXD = 8'h01;
-        #4;
-        TXD = 8'h01;
-        #4;
+        #2;
+        TXD = 8'h03;
+        #2;
         TXD = 8'h9A;
-        #4;
+        #2;
         TXD = 8'hB5;
-        #4;
+        #2;
         TXD = 8'h42;
-        #4;
+        #2;
         TXD = 8'h01;
-        #4;
+        #2;
         TXD = 8'hB5;
-        #4;
+        #2;
+        TXD = 8'h01;
+        #2;
         TXD = 8'h9A;
         TX_EN =1'b0; //Se desactiva enable
         #20;
