@@ -22,7 +22,7 @@ module tester_TX_OS (
     end
 
     initial begin
-        
+
         TX_OSET_indicate = 1;// Señal proveniente de la segunda maquina del transmisor
         tx_even = 0;// Señal proveniente de la segunda maquina del transmisor
         //Se inicializan las variables provenientes del GMII

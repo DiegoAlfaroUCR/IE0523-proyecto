@@ -1,10 +1,10 @@
-`include "tablas.v"
-`include "encode.v"
+`include "src/tablas.v"
+`include "src/encode.v"
 
 // Definir salidas de uso
 `define TRUE  1'b1
 `define FALSE 1'b0
-    
+
 //Generar los ordered sets en one-hot
 `define OS_T   9'b000000001  // Estado 1
 `define OS_R   9'b000000010  // Estado 2
@@ -23,13 +23,13 @@
 module VOID (
     input [8:0] x_in,            // Código de grupo de entrada
     input TX_EN,              // Señal de habilitación de transmisión
-    input TX_ER,              // Señal de error de transmisión, no lo usamos 
+    input TX_ER,              // Señal de error de transmisión, no lo usamos
     input [7:0] TXD,          // Código de datos TXD
     output reg [8:0] VOID_OUT // Código de grupo de salida (original o sustituido por /V/)
 );
 
     // El valor del código de grupo /V/ (K30.7)
-    // `OS_V es el valor de /V/ en 8 bits 
+    // `OS_V es el valor de /V/ en 8 bits
 
     always @(*) begin
         // Condición 1: Si [TX_EN=FALSE * TX_ER=TRUE * TXD != 00001111], devolver /V/
@@ -70,12 +70,12 @@ module TRANSMIT_OS (
     wire [8:0] tx_set_void;  // no va a cambiar porque no hay "errores"
     reg [5:0] estado_actual;
     reg [5:0] estado_siguiente;
-    localparam XMIT_DATA           = 6'b000001;     
-    localparam START_OF_PACKET     = 6'b000010; 
-    localparam TX_PACKET           = 6'b000100;            
-    localparam END_OF_PACKET_NOEXT = 6'b001000;  
+    localparam XMIT_DATA           = 6'b000001;
+    localparam START_OF_PACKET     = 6'b000010;
+    localparam TX_PACKET           = 6'b000100;
+    localparam END_OF_PACKET_NOEXT = 6'b001000;
     localparam EPD2_NOEXT          = 6'b010000;
-    localparam TX_DATA             = 6'b100000;  
+    localparam TX_DATA             = 6'b100000;
 
 
 
@@ -126,7 +126,7 @@ module TRANSMIT_OS (
             // TX_PACKET
             TX_PACKET: begin
                 if (TX_EN) begin
-                    estado_siguiente = TX_DATA;  
+                    estado_siguiente = TX_DATA;
                 end
 
                 if (!TX_EN && !TX_ER) begin
@@ -139,12 +139,12 @@ module TRANSMIT_OS (
                     estado_siguiente = TX_PACKET;
                 end
             end
-            
+
 
             // END_OF_PACKET_NOEXT
             END_OF_PACKET_NOEXT: begin
                 tx_o_set = `OS_T; // /T/
-                
+
                 if (!tx_even) begin
                 transmitting = `FALSE;
                 end
@@ -165,12 +165,12 @@ module TRANSMIT_OS (
             end
             // default
             default:
-                estado_siguiente = XMIT_DATA; 
+                estado_siguiente = XMIT_DATA;
         endcase
     end
 endmodule
 
-//Maquina de estados PCS transmit code-group 
+//Maquina de estados PCS transmit code-group
 module TRANSMIT_CG (
     input mr_main_reset,           // Señal de reinicio principal
     input GTX_CLK,                 // Reloj de transmisión
@@ -183,7 +183,7 @@ module TRANSMIT_CG (
     );
     // variables internas de TX code group
     wire [9:0] TXD_encoded;   // Datos de transmisión codificados
-    reg [3:0] state, nxt_state;          // Estado actual y Próximo estado de la máquina de estados    
+    reg [3:0] state, nxt_state;          // Estado actual y Próximo estado de la máquina de estados
     // Instanciación del módulo ENCODE
     ENCODE encoding (
         .code_group_8b_recibido(TXD),    // Datos de entrada de 8 bits
@@ -193,7 +193,7 @@ module TRANSMIT_CG (
         .running_disparity(tx_disparity) // Disparidad (RD) actual
     );
     /* Estados son 4, pero el SPECIAL_GO, y DATA_GO; al usar la lógica de cambio
-    de estado de GENERATE_CODE_GROUPS no era completamente necesario. 
+    de estado de GENERATE_CODE_GROUPS no era completamente necesario.
     */
 
     // Estados
@@ -226,8 +226,8 @@ module TRANSMIT_CG (
                 end else begin
                     nxt_state = SPECIAL_GO;
                 end
-            end                   
-                
+            end
+
                 // Generación de códigos especiales
             SPECIAL_GO: begin
                 TX_OSET_indicate = `TRUE;
@@ -270,23 +270,26 @@ endmodule
 
 module TRANSMIT (
     input mr_main_reset,
-    input GTX_CLK,
+    input Clk,
     input [7:0] TXD,
     input TX_EN,
     input TX_ER,
     output transmitting,
-    output [9:0] PUDR);
+    output [9:0] PUDR,
+
+    output TX_OSET_indicate
+    );
 
 
     // variables internas de TX
-    wire TX_OSET_indicate;
+    // wire TX_OSET_indicate;
     wire [6:0] tx_o_set;
     wire tx_even;
 
     TRANSMIT_OS ordered_set (
         // entradas de TX ordered set
         .mr_main_reset(mr_main_reset),
-        .GTX_CLK(GTX_CLK),
+        .GTX_CLK(Clk),
         .TXD(TXD[7:0]),
         .TX_EN(TX_EN),
         .TX_ER(TX_ER),
@@ -300,7 +303,7 @@ module TRANSMIT (
     TRANSMIT_CG code_group (
         // entradas de TX code group
         .mr_main_reset(mr_main_reset),
-        .GTX_CLK(GTX_CLK),
+        .GTX_CLK(Clk),
         .tx_o_set(tx_o_set),
         .TXD(TXD[7:0]),
         // salidas de TX code group
