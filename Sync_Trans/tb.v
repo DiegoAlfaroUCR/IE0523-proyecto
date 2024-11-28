@@ -6,7 +6,7 @@ module tester_TX_OS (
     output reg [7:0] TXD,
     output reg TX_EN,
     output reg TX_ER,
-    output reg TX_OSET_indicate,
+   // output reg TX_OSET_indicate,
     output reg tx_even);
 
     always begin
@@ -22,13 +22,14 @@ module tester_TX_OS (
     end
 
     initial begin
-
-        TX_OSET_indicate = 1;// Señal proveniente de la segunda maquina del transmisor
+        
+        //TX_OSET_indicate = 1;// Señal proveniente de la segunda maquina del transmisor
         tx_even = 0;// Señal proveniente de la segunda maquina del transmisor
         //Se inicializan las variables provenientes del GMII
         //TXD = 8'h00;
         TX_EN = 1'b0;
         TX_ER = 1'b0;
+        TXD = 8'h00;
 
         //Se hace reset
         mr_main_reset = 1'b0; 
@@ -36,13 +37,13 @@ module tester_TX_OS (
         mr_main_reset = 1'b1;
 
 
-        #11;
+        #10;
         TX_EN = 1'b1; //Se activa enable
-        #2;
+        #3;
         //Data a transmitir
-        TXD = 8'h00;
-        #8;
         TXD = 8'h01;
+        #2;
+        TXD = 8'h03;
         #2;
         TXD = 8'h9A;
         #2;
@@ -50,13 +51,15 @@ module tester_TX_OS (
         #2;
         TXD = 8'h42;
         #2;
-        TXD = 8'h01;
+        TXD = 8'h9A;
         #2;
         TXD = 8'hB5;
         #2;
-        TXD = 8'h9A;
+        TXD = 8'h01;
         #2;
+        TXD = 8'hC5;
         TX_EN =1'b0; //Se desactiva enable
+        TXD = 8'h00;
         #20;
         $finish;
     end
@@ -68,7 +71,7 @@ module testbench_TX_OS;
     wire [7:0] TXD;
     wire [9:0] tx_code_group;
     wire transmitting;
-    wire TX_OSET_indicate;
+    //wire TX_OSET_indicate;
     wire tx_even;
 
     initial begin
@@ -81,7 +84,7 @@ module testbench_TX_OS;
         .mr_main_reset(mr_main_reset),
         .TX_EN(TX_EN),
         .TX_ER(TX_ER),
-        .TX_OSET_indicate(TX_OSET_indicate),
+        //.TX_OSET_indicate(TX_OSET_indicate),
         .tx_even(tx_even),
         .TXD(TXD[7:0])
     );
