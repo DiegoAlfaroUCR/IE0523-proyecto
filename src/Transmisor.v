@@ -124,7 +124,7 @@ module TRANSMIT_OS (
             end
 
             // TX_PACKET
-            TX_PACKET: begin
+            TX_PACKET: begin // 4
                 if (TX_EN) begin
                     estado_siguiente = TX_DATA;  
                 end
@@ -133,7 +133,7 @@ module TRANSMIT_OS (
                     estado_siguiente = END_OF_PACKET_NOEXT; // condicion de salto de estado
                 end
             end
-            TX_DATA: begin
+            TX_DATA: begin // 32
                 tx_o_set = tx_set_void; // VOID(/D/)
                 if (TX_OSET_indicate) begin
                     estado_siguiente = TX_PACKET;
@@ -160,8 +160,9 @@ module TRANSMIT_OS (
 
                 if (!tx_even && TX_OSET_indicate) begin
                     estado_siguiente = XMIT_DATA; // salto a la etiqueta "A"
-                end else
-                    estado_siguiente = XMIT_DATA; // Revisar bien
+                // end else
+                //     estado_siguiente = XMIT_DATA; // Revisar bien
+                end
             end
             // default
             default:
@@ -183,7 +184,7 @@ module TRANSMIT_CG (
     );
     // variables internas de TX code group
     wire [9:0] TXD_encoded;   // Datos de transmisión codificados
-    reg [3:0] state, nxt_state;          // Estado actual y Próximo estado de la máquina de estados    
+    reg [4:0] state, nxt_state;          // Estado actual y Próximo estado de la máquina de estados    
     // Instanciación del módulo ENCODE
     ENCODE encoding (
         .code_group_8b_recibido(TXD),    // Datos de entrada de 8 bits
@@ -197,10 +198,11 @@ module TRANSMIT_CG (
     */
 
     // Estados
-    localparam GENERATE_CODE_GROUPS = 4'b0001;
-    localparam SPECIAL_GO           = 4'b0010;
-    localparam DATA_GO              = 4'b0100;
-    localparam IDLE_I2B             = 4'b1000;
+    localparam GENERATE_CODE_GROUPS = 5'b00001;
+    localparam SPECIAL_GO           = 5'b00010;
+    localparam DATA_GO              = 5'b00100;
+    localparam IDLE_I2B             = 5'b01000;
+    localparam IDLE_DISPARITY_OK    = 5'b10000;
 
     always @(posedge GTX_CLK) begin
         if (!mr_main_reset) begin
@@ -213,31 +215,35 @@ module TRANSMIT_CG (
     always @(*) begin
         // Valores iniciales y comportamiento de los FF
         nxt_state = state;
-        TX_OSET_indicate = `FALSE;
+       // TX_OSET_indicate = `FALSE;
         case(state)
             // GENERATE_CODE_GROUPS,  se decide qué tipo de code-group es el valor a enviar
             GENERATE_CODE_GROUPS: begin
                 if (tx_o_set == `OS_I) begin
-                    tx_even = `TRUE;
-                    PUDR = ~`SPECIAL_CODE_K28_5_10B; // /K28.5/
-                    nxt_state = IDLE_I2B;
-                 end else if (tx_o_set == `OS_D) begin
+                nxt_state = IDLE_DISPARITY_OK;
+                end else if (tx_o_set == `OS_D) begin
                     nxt_state = DATA_GO;
                 end else begin
                     nxt_state = SPECIAL_GO;
                 end
-            end                   
+            end       
+
+            IDLE_DISPARITY_OK: begin
+                tx_even = `TRUE;
+                PUDR = ~`SPECIAL_CODE_K28_5_10B; // /K28.5/
+                nxt_state = IDLE_I2B;
+            end            
                 
                 // Generación de códigos especiales
             SPECIAL_GO: begin
                 TX_OSET_indicate = `TRUE;
+                tx_even = ~tx_even; // Alterna la paridad
                 case (tx_o_set)
                     `OS_R: PUDR = `SPECIAL_CODE_K23_7_10B; // /R/
                     `OS_S: PUDR = `SPECIAL_CODE_K27_7_10B; // /S/
                     `OS_T: PUDR = `SPECIAL_CODE_K29_7_10B; // /T/
                     `OS_V: PUDR = `SPECIAL_CODE_K30_7_10B; // /V/
                 endcase
-                tx_even = ~tx_even; // Alterna la paridad
                 nxt_state = GENERATE_CODE_GROUPS;
             end
 
