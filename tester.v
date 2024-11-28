@@ -72,6 +72,7 @@ module tester(
 
         // ++++++++++++++++++++ Prueba #2: Secuencia completa ++++++++++++++++++++
             TX_EN = 1'b1; //Se activa enable
+            #30
             TXD = 8'h01; // Byte 1
             #10;
             TXD = 8'h03; // Byte 2
