@@ -1,4 +1,5 @@
 `include "tablas.v"
+`include "encode.v"
 
 // Definir salidas de uso
 `define TRUE  1'b1
@@ -67,13 +68,15 @@ module TRANSMIT_OS (
     // variables internas de TX ordered set
     // wire xmit_change_out;
     wire [8:0] tx_set_void;  // no va a cambiar porque no hay "errores"
-    reg [4:0] estado_actual;
-    reg [4:0] estado_siguiente;
-    localparam XMIT_DATA           = 5'b00001;     
-    localparam START_OF_PACKET     = 5'b00010; 
-    localparam TX_PACKET           = 5'b00100;            
-    localparam END_OF_PACKET_NOEXT = 5'b01000;  
-    localparam EPD2_NOEXT          = 5'b10000;      
+    reg [5:0] estado_actual;
+    reg [5:0] estado_siguiente;
+    localparam XMIT_DATA           = 6'b000001;     
+    localparam START_OF_PACKET     = 6'b000010; 
+    localparam TX_PACKET           = 6'b000100;            
+    localparam END_OF_PACKET_NOEXT = 6'b001000;  
+    localparam EPD2_NOEXT          = 6'b010000;
+    localparam TX_DATA             = 6'b100000;  
+
 
 
     //VOID(X)
@@ -96,8 +99,6 @@ module TRANSMIT_OS (
     always @(*) begin
         // FF
         estado_siguiente = estado_actual;
-        
-
         // Máquina de estados
         case(estado_actual)
             // XMIT_DATA
@@ -124,15 +125,21 @@ module TRANSMIT_OS (
 
             // TX_PACKET
             TX_PACKET: begin
-
                 if (TX_EN) begin
-                    tx_o_set = tx_set_void; // VOID(/D/)   
+                    estado_siguiente = TX_DATA;  
                 end
 
                 if (!TX_EN && !TX_ER) begin
                     estado_siguiente = END_OF_PACKET_NOEXT; // condicion de salto de estado
                 end
             end
+            TX_DATA: begin
+                tx_o_set = tx_set_void; // VOID(/D/)
+                if (TX_OSET_indicate) begin
+                    estado_siguiente = TX_PACKET;
+                end
+            end
+            
 
             // END_OF_PACKET_NOEXT
             END_OF_PACKET_NOEXT: begin
@@ -163,95 +170,37 @@ module TRANSMIT_OS (
     end
 endmodule
 
-
-/*-------------------------------------------------------------------------------
-
---------------------- MODULOS PARA PCS transmit code-group  ---------------------
-------------------------------------------------------------------------------------*/
-
-
-// Este módulo codifica un código de grupo de 8 bits en un código de grupo de 10 bits.
-// esta función fijo luego la acomodo bien en encode.v cuando ya haya revisado lo de la disparidad.
-module ENCODE (
-    input [7:0] code_group_8b_recibido,  // Entrada de 8 bits
-    output reg [9:0] code_group_10b      // Salida de 10 bits
-);
-
-// variables internas:
-
-    always @(code_group_8b_recibido) begin
-        // Códigos de datos válidos
-        if (code_group_8b_recibido == `DATA_CODE_D00_0_8B)
-            code_group_10b = `DATA_CODE_D00_0_10B; // D0.0
-        else if (code_group_8b_recibido == `DATA_CODE_D01_0_8B)
-            code_group_10b = `DATA_CODE_D01_0_10B; // D1.0
-        else if (code_group_8b_recibido == `DATA_CODE_D02_0_8B)
-            code_group_10b = `DATA_CODE_D02_0_10B; // D2.0
-        else if (code_group_8b_recibido == `DATA_CODE_D03_0_8B)
-            code_group_10b = `DATA_CODE_D03_0_10B; // D3.0
-        else if (code_group_8b_recibido == `DATA_CODE_D02_2_8B)
-            code_group_10b = `DATA_CODE_D02_2_10B; // D2.2
-        else if (code_group_8b_recibido == `DATA_CODE_D16_2_8B)
-            code_group_10b = `DATA_CODE_D16_2_10B; // D16.2
-        else if (code_group_8b_recibido == `DATA_CODE_D26_4_8B)
-            code_group_10b = `DATA_CODE_D26_4_10B; // D26.4
-        else if (code_group_8b_recibido == `DATA_CODE_D06_5_8B)
-            code_group_10b = `DATA_CODE_D06_5_10B; // D6.5
-        else if (code_group_8b_recibido == `DATA_CODE_D21_5_8B)
-            code_group_10b = `DATA_CODE_D21_5_10B; // D21.5
-        else if (code_group_8b_recibido == `DATA_CODE_D05_6_8B)
-            code_group_10b = `DATA_CODE_D05_6_10B; // D05.6
-
-        // Códigos especiales
-        else if (code_group_8b_recibido == `SPECIAL_CODE_K28_0_8B)
-            code_group_10b = `SPECIAL_CODE_K28_0_10B; // K28.0
-        else if (code_group_8b_recibido == `SPECIAL_CODE_K28_1_8B)
-            code_group_10b = `SPECIAL_CODE_K28_1_10B; // K28.1
-        else if (code_group_8b_recibido == `SPECIAL_CODE_K28_2_8B)
-            code_group_10b = `SPECIAL_CODE_K28_2_10B; // K28.2
-        else if (code_group_8b_recibido == `SPECIAL_CODE_K28_3_8B)
-            code_group_10b = `SPECIAL_CODE_K28_3_10B; // K28.3
-        else if (code_group_8b_recibido == `SPECIAL_CODE_K28_4_8B)
-            code_group_10b = `SPECIAL_CODE_K28_4_10B; // K28.4
-        else if (code_group_8b_recibido == `SPECIAL_CODE_K28_5_8B)
-            code_group_10b = `SPECIAL_CODE_K28_5_10B; // K28.5
-        else if (code_group_8b_recibido == `SPECIAL_CODE_K28_6_8B)
-            code_group_10b = `SPECIAL_CODE_K28_6_10B; // K28.6
-        else if (code_group_8b_recibido == `SPECIAL_CODE_K28_7_8B)
-            code_group_10b = `SPECIAL_CODE_K28_7_10B; // K28.7
-        else if (code_group_8b_recibido == `SPECIAL_CODE_K23_7_8B)
-            code_group_10b = `SPECIAL_CODE_K23_7_10B; // K23.7 /R/
-        else if (code_group_8b_recibido == `SPECIAL_CODE_K27_7_8B)
-            code_group_10b = `SPECIAL_CODE_K27_7_10B; // K27.7 /S/
-        else if (code_group_8b_recibido == `SPECIAL_CODE_K30_7_8B)
-            code_group_10b = `SPECIAL_CODE_K30_7_10B; // K30.7 /V/
-    end
-endmodule
-
 //Maquina de estados PCS transmit code-group 
 module TRANSMIT_CG (
     input mr_main_reset,           // Señal de reinicio principal
     input GTX_CLK,                 // Reloj de transmisión
     input [6:0] tx_o_set,           // Conjunto de salida de transmisión
     input [7:0] TXD,               // Datos de transmisión
+    input tx_disparity,            // Disparidad del code group
     output reg tx_even,            // Bit de paridad de transmisión
     output reg TX_OSET_indicate,   // Indicador de conjunto de salida de transmisión
     output reg [9:0] PUDR // Código de grupo de transmisión
     );
-// variables internas de TX code group
+    // variables internas de TX code group
     wire [9:0] TXD_encoded;   // Datos de transmisión codificados
-    reg [1:0] state, nxt_state;          // Estado actual y Próximo estado de la máquina de estados    
-// función ENCODE(X)
-ENCODE encoding (
-    .code_group_8b_recibido(TXD),
-    .code_group_10b(TXD_encoded)
+    reg [3:0] state, nxt_state;          // Estado actual y Próximo estado de la máquina de estados    
+    // Instanciación del módulo ENCODE
+    ENCODE encoding (
+        .code_group_8b_recibido(TXD),    // Datos de entrada de 8 bits
+        .code_group_10b(TXD_encoded),    // Salida de datos codificados de 10 bits
+        .reset(mr_main_reset),           // Señal de reset
+        .clk(GTX_CLK),                   // Reloj para el módulo ENCODE
+        .running_disparity(tx_disparity) // Disparidad (RD) actual
     );
     /* Estados son 4, pero el SPECIAL_GO, y DATA_GO; al usar la lógica de cambio
     de estado de GENERATE_CODE_GROUPS no era completamente necesario. 
     */
 
-    localparam GENERATE_CODE_GROUPS = 2'b01;
-    localparam IDLE_I2B = 2'b10;
+    // Estados
+    localparam GENERATE_CODE_GROUPS = 4'b0001;
+    localparam SPECIAL_GO           = 4'b0010;
+    localparam DATA_GO              = 4'b0100;
+    localparam IDLE_I2B             = 4'b1000;
 
     always @(posedge GTX_CLK) begin
         if (!mr_main_reset) begin
@@ -270,38 +219,41 @@ ENCODE encoding (
             GENERATE_CODE_GROUPS: begin
                 if (tx_o_set == `OS_I) begin
                     tx_even = `TRUE;
-                    PUDR = `SPECIAL_CODE_K28_5_10B; // /K28.5/
+                    PUDR = ~`SPECIAL_CODE_K28_5_10B; // /K28.5/
                     nxt_state = IDLE_I2B;
-                end                    
-                
-                else begin
-                    // Se pasa al estado SPECIAL_GO, pero no se crea un estado
-                    // adicional, no es necesario
-                    TX_OSET_indicate = `TRUE;
-                    tx_even = !tx_even;
-                        
-                    if(tx_o_set == `OS_R)
-                        PUDR = `SPECIAL_CODE_K23_7_10B; // /R/
-                    
-                    if(tx_o_set == `OS_S)
-                        PUDR = `SPECIAL_CODE_K27_7_10B; // /S/
-
-                    if(tx_o_set == `OS_T)
-                        PUDR = `SPECIAL_CODE_K29_7_10B; // /T/
-
-                    if(tx_o_set == `OS_V)
-                        PUDR = `SPECIAL_CODE_K30_7_10B; // /V/
-                    // este es como el estado de DATA_GO
-                    if(tx_o_set == `OS_D)
-                        PUDR = TXD_encoded;                 
+                 end else if (tx_o_set == `OS_D) begin
+                    nxt_state = DATA_GO;
+                end else begin
+                    nxt_state = SPECIAL_GO;
                 end
+            end                   
+                
+                // Generación de códigos especiales
+            SPECIAL_GO: begin
+                TX_OSET_indicate = `TRUE;
+                case (tx_o_set)
+                    `OS_R: PUDR = `SPECIAL_CODE_K23_7_10B; // /R/
+                    `OS_S: PUDR = `SPECIAL_CODE_K27_7_10B; // /S/
+                    `OS_T: PUDR = `SPECIAL_CODE_K29_7_10B; // /T/
+                    `OS_V: PUDR = `SPECIAL_CODE_K30_7_10B; // /V/
+                endcase
+                tx_even = ~tx_even; // Alterna la paridad
+                nxt_state = GENERATE_CODE_GROUPS;
+            end
+
+            // Transmisión de datos
+            DATA_GO: begin
+                TX_OSET_indicate = `TRUE;
+                PUDR = TXD_encoded; // Transmite datos codificados
+                tx_even = ~tx_even; // Alterna la paridad
+                nxt_state = GENERATE_CODE_GROUPS;
             end
 
             // IDLE_I2B, pasar la segunda parte de IDLE en par
             IDLE_I2B: begin
                 tx_even = `FALSE;
                 TX_OSET_indicate = `TRUE;
-                PUDR = `DATA_CODE_D16_2_10B; // /D16.2/
+                PUDR = ~`DATA_CODE_D16_2_10B; // /D16.2/
                 nxt_state = GENERATE_CODE_GROUPS;
             end
 
@@ -322,7 +274,6 @@ module TRANSMIT (
     input [7:0] TXD,
     input TX_EN,
     input TX_ER,
-   // input [2:0] xmit,
     output transmitting,
     output [9:0] PUDR);
 
