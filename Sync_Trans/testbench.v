@@ -42,7 +42,8 @@ module testbench;
       .power_on(power_on),
       .TXD(TXD[7:0]),
       .TX_EN(TX_EN),
-      .TX_ER(TX_ER)
+      .TX_ER(TX_ER),
+      .PUDI_indicate(PUDI_indicate) //
   );
 
     // Synchronization
@@ -52,7 +53,7 @@ module testbench;
       .mr_main_reset(mr_main_reset),
       .power_on(power_on),
       .PUDI(PUDR_PUDI[9:0]),
-      .PUDI_indicate(TX_OSET_indicate),
+      .PUDI_indicate(PUDI_indicate),
 
       // Outputs
       .code_sync_status(code_sync_status),
@@ -70,8 +71,8 @@ module testbench;
 
       // Outputs
       .transmitting(transmitting),
-      .PUDR(PUDR_PUDI[9:0]),
-      .TX_OSET_indicate(TX_OSET_indicate)
+      .PUDR(PUDR_PUDI[9:0])
+      // .TX_OSET_indicate(TX_OSET_indicate)
   );
 
   initial begin

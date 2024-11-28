@@ -33,7 +33,9 @@ module tester(
     output reg power_on,                 // Señal de encencido
     output reg [7:0] TXD,                // Datos a transmitir
     output reg TX_EN,                    // Señal de enable para transmisor
-    output reg TX_ER                     // Señal de error para transmisor
+    output reg TX_ER,                    // Señal de error para transmisor
+
+    output reg PUDI_indicate //
     );
 
     initial begin
@@ -44,13 +46,17 @@ module tester(
             TX_EN = 1'b0;
             TX_ER = 1'b0;
             TXD = 8'h00;
+            PUDI_indicate = 0;
 
             // Reset momentáneo al inicio para iniciar en estado
             #5 mr_main_reset = 1;
+            PUDI_indicate = 1;
             #10 mr_main_reset = 0;
 
         // ++++++++++++++++++++ Prueba #1: Operación correcta ++++++++++++++++++++
             #60
+            TX_EN = 1'b1; //Se activa enable
+            #10
             TXD = 8'h01;
             #10;
             TXD = 8'h03;
