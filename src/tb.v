@@ -29,6 +29,7 @@ module tester_TX_OS (
         //TXD = 8'h00;
         TX_EN = 1'b0;
         TX_ER = 1'b0;
+        TXD = 8'h00;
 
         //Se hace reset
         mr_main_reset = 1'b0; 
@@ -50,14 +51,15 @@ module tester_TX_OS (
         #2;
         TXD = 8'h42;
         #2;
-        TXD = 8'h01;
+        TXD = 8'h9A;
         #2;
         TXD = 8'hB5;
         #2;
         TXD = 8'h01;
         #2;
-        TXD = 8'h9A;
+        TXD = 8'hC5;
         TX_EN =1'b0; //Se desactiva enable
+        TXD = 8'h00;
         #20;
         $finish;
     end
