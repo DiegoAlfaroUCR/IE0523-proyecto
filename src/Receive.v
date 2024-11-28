@@ -35,6 +35,29 @@ module Receive (
             `DATA_CODE_D06_5_10B:  DECODE = `DATA_CODE_D06_5_8B;
             `DATA_CODE_D21_5_10B:  DECODE = `DATA_CODE_D21_5_8B;
             `DATA_CODE_D05_6_10B:  DECODE = `DATA_CODE_D05_6_8B;
+
+            ~`SPECIAL_CODE_K28_0_10B:  DECODE = `SPECIAL_CODE_K28_0_8B;   
+            ~`SPECIAL_CODE_K28_1_10B:  DECODE = `SPECIAL_CODE_K28_1_8B;  
+            ~`SPECIAL_CODE_K28_2_10B:  DECODE = `SPECIAL_CODE_K28_2_8B;  
+            ~`SPECIAL_CODE_K28_3_10B:  DECODE = `SPECIAL_CODE_K28_3_8B;  
+            ~`SPECIAL_CODE_K28_4_10B:  DECODE = `SPECIAL_CODE_K28_4_8B;    
+            ~`SPECIAL_CODE_K28_5_10B:  DECODE = `SPECIAL_CODE_K28_5_8B;   
+            ~`SPECIAL_CODE_K28_6_10B:  DECODE = `SPECIAL_CODE_K28_6_8B;  
+            ~`SPECIAL_CODE_K28_7_10B:  DECODE = `SPECIAL_CODE_K28_7_8B;      
+            ~`SPECIAL_CODE_K23_7_10B:  DECODE = `SPECIAL_CODE_K23_7_8B;   
+            ~`SPECIAL_CODE_K27_7_10B:  DECODE = `SPECIAL_CODE_K27_7_8B;  
+            ~`SPECIAL_CODE_K29_7_10B:  DECODE = `SPECIAL_CODE_K29_7_8B;  
+            ~`SPECIAL_CODE_K30_7_10B:  DECODE = `SPECIAL_CODE_K30_7_8B; 
+            ~`DATA_CODE_D00_0_10B:  DECODE = `DATA_CODE_D00_0_8B;  
+            ~`DATA_CODE_D01_0_10B:  DECODE = `DATA_CODE_D01_0_8B;
+            ~`DATA_CODE_D02_0_10B:  DECODE = `DATA_CODE_D02_0_8B;
+            ~`DATA_CODE_D02_2_10B:  DECODE = `DATA_CODE_D02_2_8B;
+            ~`DATA_CODE_D03_0_10B:  DECODE = `DATA_CODE_D03_0_8B;
+            ~`DATA_CODE_D16_2_10B:  DECODE = `DATA_CODE_D16_2_8B;
+            ~`DATA_CODE_D26_4_10B:  DECODE = `DATA_CODE_D26_4_8B;
+            ~`DATA_CODE_D06_5_10B:  DECODE = `DATA_CODE_D06_5_8B;
+            ~`DATA_CODE_D21_5_10B:  DECODE = `DATA_CODE_D21_5_8B;
+            ~`DATA_CODE_D05_6_10B:  DECODE = `DATA_CODE_D05_6_8B;
         endcase
     endfunction
 
@@ -45,11 +68,11 @@ module Receive (
     localparam IDLE_D       = 8'b00001000;
     localparam START_PACKET = 8'b00010000;
     localparam RECEIVE      = 8'b00100000;
-    localparam RX_DATA      = 8'b01000000;
+    // localparam RX_DATA      = 8'b01000000;
     localparam TRI_RRI      = 8'b10000000;
 
     // Definir el patrón de 30 bits que se utilizará para verificar los tres últimos códigos SUDI
-    reg [29:0] check_end_code = {`SPECIAL_CODE_K29_7_10B ,`SPECIAL_CODE_K23_7_10B ,`SPECIAL_CODE_K28_5_10B};
+    reg [29:0] check_end_code = {`SPECIAL_CODE_K29_7_10B ,`SPECIAL_CODE_K23_7_10B ,~`SPECIAL_CODE_K28_5_10B};
 
     wire [9:0] SUDI_RX_Code;   // Registro para almacenar la señal SUDI de 10 bits
     wire RX_even;               // Señal de paridad (disparidad)
@@ -58,7 +81,7 @@ module Receive (
     assign RX_even = SUDI[0];  // Asignar el bit de paridad de SUDI
 
     // Registro de desplazamiento para las últimas tres señales de 10 bits
-    reg [9:0] last_three_codes[2:0];
+    reg [9:0] last_three_codes[1:0];
 
     reg [7:0] current_state, next_state;  // Estados actuales y siguientes de la máquina de estados
 
@@ -69,24 +92,26 @@ module Receive (
             current_state <= LINK_FAILED;
             last_three_codes[0] <= 10'b0;
             last_three_codes[1] <= 10'b0;
-            last_three_codes[2] <= 10'b0;
+            // last_three_codes[2] <= 10'b0;
             check_end <= 30'b0;
             RXD <= 7'b0;
         end else begin
             current_state <= next_state;  // Actualiza el estado actual con el siguiente estado
-            if (current_state == RECEIVE) begin
-                last_three_codes[2] <= last_three_codes[1];
+            // if (current_state == RECEIVE || current_state == START_PACKET) begin
+                // last_three_codes[2] <= last_three_codes[1];
                 last_three_codes[1] <= last_three_codes[0];
                 last_three_codes[0] <= SUDI_RX_Code;
-            end
+            // end
         end
-        check_end = {last_three_codes[2], last_three_codes[1], last_three_codes[0]};
+        // check_end <= {last_three_codes[2], last_three_codes[1], last_three_codes[0]};
     end
 
     // Lógica combinacional para determinar el siguiente estado y las señales de salida
     always @(*) begin
         RX_DV = 1'b0;  // Inicializa RX_DV (dato válido) en 0
         next_state = current_state;  // Establece el siguiente estado igual al estado actual por defecto
+
+        check_end = {last_three_codes[1], last_three_codes[0], SUDI_RX_Code};
 
         case (current_state)
             LINK_FAILED: begin
@@ -96,7 +121,7 @@ module Receive (
             end
 
             WAIT_K: begin
-                if (SUDI_RX_Code == `SPECIAL_CODE_K28_5_10B && RX_even)  // Si el código es el esperado y la paridad es correcta
+                if (SUDI_RX_Code == ~`SPECIAL_CODE_K28_5_10B && RX_even)  // Si el código es el esperado y la paridad es correcta
                     next_state = RX_K;  // Transición al estado RX_K
                 else
                     next_state = WAIT_K;  // Permanece en el estado WAIT_K
@@ -123,16 +148,18 @@ module Receive (
                 next_state = RECEIVE;  // Transición al estado RECEIVE
             end
             RECEIVE: begin
+                RX_DV = 1'b1;
+                RXD = DECODE(SUDI_RX_Code);
                 if (check_end == check_end_code)  // Verifica si coinciden con el patrón final
                     next_state = TRI_RRI;  // Si coincide, transita al estado TRI_RRI
                 else
-                    next_state = RX_DATA;
+                    next_state = RECEIVE;
             end
-            RX_DATA: begin 
-                RX_DV = 1'b1;
-                RXD = DECODE(SUDI_RX_Code);
-                next_state = RECEIVE;
-            end
+            // RX_DATA: begin 
+            //     RX_DV = 1'b1;
+            //     RXD = DECODE(SUDI_RX_Code);
+            //     next_state = RECEIVE;
+            // end
             TRI_RRI: begin
                 RXD = 7'b0;
                 RX_DV = 1'b0;

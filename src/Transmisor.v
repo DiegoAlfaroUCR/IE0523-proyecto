@@ -1,10 +1,10 @@
-`include "tablas.v"
-`include "encode.v"
+`include "src/tablas.v"
+`include "src/encode.v"
 
 // Definir salidas de uso
 `define TRUE  1'b1
 `define FALSE 1'b0
-    
+
 //Generar los ordered sets en one-hot
 `define OS_T   9'b000000001  // Estado 1
 `define OS_R   9'b000000010  // Estado 2
@@ -23,7 +23,7 @@
 module VOID (
     input [8:0] x_in,            // Código de grupo de entrada
     input TX_EN,              // Señal de habilitación de transmisión
-    input TX_ER,              // Señal de error de transmisión, no lo usamos 
+    input TX_ER,              // Señal de error de transmisión, no lo usamos
     input [7:0] TXD,          // Código de datos TXD
     output reg [8:0] VOID_OUT // Código de grupo de salida (original o sustituido por /V/)
 );
@@ -70,11 +70,11 @@ module TRANSMIT_OS (
     wire [8:0] tx_set_void;  // no va a cambiar porque no hay "errores"
     reg [4:0] estado_actual;
     reg [4:0] estado_siguiente;
-    localparam XMIT_DATA           = 5'b00001;     
-    localparam START_OF_PACKET     = 5'b00010; 
-    localparam TX_PACKET           = 5'b00100;            
-    localparam END_OF_PACKET_NOEXT = 5'b01000;  
-    localparam EPD2_NOEXT          = 5'b10000;      
+    localparam XMIT_DATA           = 5'b00001;
+    localparam START_OF_PACKET     = 5'b00010;
+    localparam TX_PACKET           = 5'b00100;
+    localparam END_OF_PACKET_NOEXT = 5'b01000;
+    localparam EPD2_NOEXT          = 5'b10000;
 
 
     //VOID(X)
@@ -97,7 +97,7 @@ module TRANSMIT_OS (
     always @(*) begin
         // FF
         estado_siguiente = estado_actual;
-        
+
 
         // Máquina de estados
         case(estado_actual)
@@ -106,7 +106,7 @@ module TRANSMIT_OS (
                 transmitting = `FALSE;
                 tx_o_set = `OS_I; // /I/
                 //transmitting = `TRUE;
-                if (!TX_EN && TX_OSET_indicate) 
+                if (!TX_EN && TX_OSET_indicate)
                     estado_siguiente = XMIT_DATA;
 
                 if (TX_EN && !TX_ER && TX_OSET_indicate)
@@ -127,7 +127,7 @@ module TRANSMIT_OS (
             TX_PACKET: begin
 
                 if (TX_EN) begin
-                    tx_o_set = tx_set_void; // VOID(/D/)   
+                    tx_o_set = tx_set_void; // VOID(/D/)
                 end
 
                 if (!TX_EN && !TX_ER) begin
@@ -138,7 +138,7 @@ module TRANSMIT_OS (
             // END_OF_PACKET_NOEXT
             END_OF_PACKET_NOEXT: begin
                 tx_o_set = `OS_T; // /T/
-                
+
                 if (!tx_even) begin
                 transmitting = `FALSE;
                 end
@@ -159,7 +159,7 @@ module TRANSMIT_OS (
             end
             // default
             default:
-                estado_siguiente = XMIT_DATA; 
+                estado_siguiente = XMIT_DATA;
         endcase
     end
 endmodule
@@ -169,7 +169,7 @@ endmodule
 
 --------------------- MODULOS PARA PCS transmit code-group  ---------------------
 ------------------------------------------------------------------------------------*/
-//Maquina de estados PCS transmit code-group 
+//Maquina de estados PCS transmit code-group
 module TRANSMIT_CG (
     input mr_main_reset,           // Señal de reinicio principal
     input GTX_CLK,                 // Reloj de transmisión
@@ -216,17 +216,17 @@ module TRANSMIT_CG (
                     tx_even = `TRUE;
                     PUDR = ~`SPECIAL_CODE_K28_5_10B; // /K28.5/
                     nxt_state = IDLE_I2B;
-                end                    
-                
+                end
+
                 else begin
                     // Se pasa al estado SPECIAL_GO, pero no se crea un estado
                     // adicional, no es necesario
                     TX_OSET_indicate = `TRUE;
                     tx_even = !tx_even;
-                        
+
                     if(tx_o_set == `OS_R)
                         PUDR = `SPECIAL_CODE_K23_7_10B; // /R/
-                    
+
                     if(tx_o_set == `OS_S)
                         PUDR = `SPECIAL_CODE_K27_7_10B; // /S/
 
@@ -237,7 +237,7 @@ module TRANSMIT_CG (
                         PUDR = `SPECIAL_CODE_K30_7_10B; // /V/
                     // este es como el estado de DATA_GO
                     if(tx_o_set == `OS_D)
-                        PUDR = TXD_encoded;                 
+                        PUDR = TXD_encoded;
                 end
             end
 

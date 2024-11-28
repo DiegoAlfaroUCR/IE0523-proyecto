@@ -80,7 +80,6 @@ module Synchronization(
             prev_rx_even     <= rx_even;
 
         end
-        SUDI <= {PUDI, rx_even};    // Asignar valor de SUDI
     end
 
 /* +++++++++++++++++++++++++++++ Cambio de estados ++++++++++++++++++++++++++++++++++ */
@@ -90,6 +89,7 @@ module Synchronization(
     next_State            = State;
     good_cgs              = prev_good_cgs;
     rx_even               = prev_rx_even;
+    SUDI = {PUDI, rx_even};    // Asignar valor de SUDI
 
     // Lógica combinacional según el estado presente.
     case (State)

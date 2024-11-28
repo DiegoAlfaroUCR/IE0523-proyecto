@@ -1,4 +1,4 @@
-`include "tablas.v"
+`include "src/tablas.v"
 module countones #(parameter WIDTH = 6) (
     input [WIDTH-1:0] data_in, // Entrada de datos
     output reg [3:0] count     // Cantidad de bits en 1 (hasta 15 bits máximo)
