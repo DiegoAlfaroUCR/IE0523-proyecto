@@ -1,4 +1,7 @@
 
+`include "src/Receive.v"
+`include "test/Receive/tester.v"
+
 module Receive_tb;
 
     // Señales del módulo
@@ -30,7 +33,7 @@ module Receive_tb;
     // Procedimiento de prueba
     initial begin
         // Configurar el dump file para GTKWave
-        $dumpfile("Receive_tb.vcd");  // Nombre del archivo de volcado
+        $dumpfile("resultados.vcd");  // Nombre del archivo de volcado
         $dumpvars(0, Receive_tb);     // Registrar todas las señales de este módulo
     end
 

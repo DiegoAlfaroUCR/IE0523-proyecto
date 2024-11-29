@@ -5,81 +5,42 @@ else
 	cleanCommand = rm -f
 endif
 
-# Este define es para recrear la configuración usada en gtkwave con las ondas ya puestas
-# se copia el contenido del archivo de configuración en configuracionGTKW y se escribe al archivo.
-define configuracionGTKW
-[timestart] 0
-[size] 1920 991
-[pos] -1 -1
-*-5.562028 -1 135 215 35 80 255 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
-[treeopen] testbench.
-[treeopen] testbench.pcs.
-[sst_width] 46
-[signals_width] 190
-[sst_expanded] 0
-[sst_vpaned_height] 288
-@200
--GMII
-@28
-testbench.gmii.Clk
-testbench.gmii.mr_main_reset
-testbench.gmii.power_on
-@22
-[color] 2
-testbench.gmii.TXD[7:0]
-@28
-testbench.gmii.TX_EN
-testbench.gmii.TX_ER
-@200
--
--
--TRANSMISOR
-@28
-[color] 5
-testbench.pcs.T1.tx_even
-[color] 5
-testbench.pcs.T1.code_group.tx_disparity
-testbench.pcs.T1.transmitting
-@22
-testbench.pcs.T1.PUDR[9:0]
-@200
--
--
--SINCRONIZADOR
-@28
-[color] 5
-testbench.pcs.S1.PUDI_COMMA
-@22
-testbench.pcs.S1.SUDI[10:0]
-@28
-testbench.pcs.S1.code_sync_status
-@200
--
--
--RECEPTOR
-@28
-testbench.pcs.R1.RX_DV
-@22
-[color] 2
-testbench.pcs.R1.RXD[7:0]
-[pattern_trace] 1
-[pattern_trace] 0
-endef
+# Constantes para simulación
+IVERILOG = iverilog
+VVP = vvp
+GTKWAVE = gtkwave
+OUTPUT = salida
+WAVEFORM = resultados.vcd
 
-# Esto evita que se haga conflictos si tiene archivos llamados clean o sync.
-.PHONY: sym clean mostrar_sym
 
 # Regla para limpiar los archivos generados.
 clean:
-	$(cleanCommand) salida resultados.vcd ondas.gtkw
+	$(cleanCommand) $(OUTPUT) $(WAVEFORM)
 
-# Regla para crear y simular el módulo.
-sym:
-	iverilog -o salida testbench.v
-	vvp salida
 
-mostrar_sym:
-	$(file >ondas.gtkw,$(configuracionGTKW))
-	iverilog -o salida testbench.v
-	vvp salida
-	gtkwave resultados.vcd ondas.gtkw
+# Regla general para simular
+simulate:
+	$(IVERILOG) -o $(OUTPUT) $(TESTBENCH)
+	$(VVP) $(OUTPUT)
+	$(GTKWAVE) $(WAVEFORM) $(GTKW)
+
+# Reglas de compilación según prueba requerida
+PCS_completo:
+	$(MAKE) simulate TESTBENCH=test/PCS_completo/testbench.v GTKW=test/PCS_completo/ondas.gtkw
+
+sync_trans:
+	$(MAKE) simulate TESTBENCH=test/Sync_Trans/testbench.v GTKW=test/Sync_Trans/ondas.gtkw
+
+sync_receive:
+	$(MAKE) simulate TESTBENCH=test/Sync_Receive/testbench.v GTKW=test/Sync_Receive/ondas.gtkw
+
+sync:
+	$(MAKE) simulate TESTBENCH=test/Sync/testbench.v GTKW=test/Sync/ondas.gtkw
+
+receive:
+	$(MAKE) simulate TESTBENCH=test/Receive/testbench.v GTKW=test/Receive/ondas.gtkw
+
+transmit:
+	$(MAKE) simulate TESTBENCH=test/Transmit/testbench.v GTKW=test/Transmit/ondas.gtkw
+
+.PHONY: clean PCS_completo

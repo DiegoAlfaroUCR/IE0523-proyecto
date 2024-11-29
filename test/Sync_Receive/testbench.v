@@ -1,4 +1,7 @@
 
+`include "test/Sync_Receive/Receive_Synchro.v"
+`include "test/Sync_Receive/tester.v"
+
 module Receptor_Synchro_tb;
 
     wire clk;
@@ -26,7 +29,7 @@ module Receptor_Synchro_tb;
 
     initial begin
         // Configurar el dump file para GTKWave
-        $dumpfile("Receive_tb.vcd");  // Nombre del archivo de volcado
+        $dumpfile("resultados.vcd");  // Nombre del archivo de volcado
         $dumpvars(0, Receptor_Synchro_tb);     // Registrar todas las señales de este módulo
     end
 

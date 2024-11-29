@@ -13,7 +13,7 @@
 
 `include "src/Synchronization.v"
 `include "src/Transmisor.v"
-`include "tester.v"
+`include "test/Sync_Trans/tester.v"
 
 module testbench;
   // Beginning of automatic wires (for undeclared instantiated-module outputs)
@@ -43,7 +43,7 @@ module testbench;
       .TXD(TXD[7:0]),
       .TX_EN(TX_EN),
       .TX_ER(TX_ER),
-      .PUDI_indicate(PUDI_indicate) //
+      .PUDI_indicate(PUDI_indicate)
   );
 
     // Synchronization
@@ -72,7 +72,6 @@ module testbench;
       // Outputs
       .transmitting(transmitting),
       .PUDR(PUDR_PUDI[9:0])
-      // .TX_OSET_indicate(TX_OSET_indicate)
   );
 
   initial begin
