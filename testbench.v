@@ -11,33 +11,25 @@
  * MIT License
  */
 
-`include "src/Synchronization.v"
-`include "src/Transmisor.v"
-`include "src/Receive.v"
+`include "src/PCS.v"
 `include "tester.v"
 
 module testbench;
-  // Wires
-  wire [7:0] TXD;
-  wire TX_EN;
-  wire TX_ER;
-  wire Clk;
-  wire mr_main_reset;
-  wire power_on;
-  wire code_sync_status;
-  wire [10:0] SUDI;
-  wire [9:0] PUDR_PUDI;
-  wire TX_OSET_indicate;
-  wire RX_DV;
-  wire [7:0] RXD;
+  /*AUTOWIRE*/
+  // Beginning of automatic wires (for undeclared instantiated-module outputs)
+  wire RX_DV;  // From pcs of PCS
+  wire [7:0] RXD;  // From pcs of PCS
+  wire Clk;  // To/From gmii of tester, ..
+  wire mr_main_reset;  // To/From gmii of tester, ..
+  wire power_on;  // To/From gmii of tester, ..
+  wire [7:0] TXD;  // To/From gmii of tester, ..
+  wire TX_EN;  // To/From gmii of tester, ..
+  wire TX_ER;  // To/From gmii of tester, ..
+  wire PUDI_indicate;  // To/From gmii of tester, ..
+  // End of automatics
 
-  tester Test1 (
-      // Inputs
-      .code_sync_status(code_sync_status),
-      .SUDI(SUDI[10:0]),
-      .transmitting(transmitting),
-      .PUDR_PUDI(PUDR_PUDI[9:0]),
 
+  tester gmii (  /*AUTOINST*/
       // Outputs
       .Clk(Clk),
       .mr_main_reset(mr_main_reset),
@@ -45,44 +37,18 @@ module testbench;
       .TXD(TXD[7:0]),
       .TX_EN(TX_EN),
       .TX_ER(TX_ER),
-      .PUDI_indicate(PUDI_indicate) //
+      .PUDI_indicate(PUDI_indicate)
   );
 
-    // Synchronization
-  Synchronization S1 (
+  PCS pcs (  /*AUTOINST*/
       // Inputs
       .Clk(Clk),
       .mr_main_reset(mr_main_reset),
       .power_on(power_on),
-      .PUDI(PUDR_PUDI[9:0]),
+      .TXD(TXD[7:0]),
+      .TX_EN(TX_EN),
+      .TX_ER(TX_ER),
       .PUDI_indicate(PUDI_indicate),
-
-      // Outputs
-      .code_sync_status(code_sync_status),
-      .SUDI(SUDI[10:0])
-  );
-
-    // Transmisor
-  TRANSMIT T1 (
-      // Inputs
-      .GTX_CLK(Clk),
-      .mr_main_reset(mr_main_reset),
-      .TXD(TXD[7:0]),
-      .TX_EN(TX_EN),
-      .TX_ER(TX_ER),
-
-      // Outputs
-      .transmitting(transmitting),
-      .PUDR(PUDR_PUDI[9:0])
-  );
-
-    // Receptor
-  Receive R1 (  /*AUTOINST*/
-      // Inputs
-      .clk(Clk),
-      .reset(mr_main_reset),
-      .sync_status(code_sync_status),
-      .SUDI(SUDI[10:0]),
       // Outputs
       .RX_DV(RX_DV),
       .RXD(RXD[7:0])

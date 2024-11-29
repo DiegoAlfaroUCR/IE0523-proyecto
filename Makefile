@@ -13,8 +13,7 @@ define configuracionGTKW
 [pos] -1 -1
 *-5.562028 -1 135 215 35 80 255 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] testbench.
-[treeopen] testbench.S1.
-[treeopen] testbench.T1.
+[treeopen] testbench.pcs.
 [sst_width] 46
 [signals_width] 190
 [sst_expanded] 0
@@ -22,47 +21,47 @@ define configuracionGTKW
 @200
 -GMII
 @28
-testbench.Test1.Clk
-testbench.Test1.mr_main_reset
-testbench.Test1.power_on
+testbench.gmii.Clk
+testbench.gmii.mr_main_reset
+testbench.gmii.power_on
 @22
 [color] 2
-testbench.Test1.TXD[7:0]
+testbench.gmii.TXD[7:0]
 @28
-testbench.T1.TX_EN
-testbench.T1.TX_ER
+testbench.gmii.TX_EN
+testbench.gmii.TX_ER
 @200
 -
 -
 -TRANSMISOR
 @28
 [color] 5
-testbench.T1.tx_even
+testbench.pcs.T1.tx_even
 [color] 5
-testbench.T1.code_group.tx_disparity
-testbench.Test1.transmitting
+testbench.pcs.T1.code_group.tx_disparity
+testbench.pcs.T1.transmitting
 @22
-testbench.T1.PUDR[9:0]
+testbench.pcs.T1.PUDR[9:0]
 @200
 -
 -
 -SINCRONIZADOR
 @28
 [color] 5
-testbench.S1.PUDI_COMMA
+testbench.pcs.S1.PUDI_COMMA
 @22
-testbench.S1.SUDI[10:0]
+testbench.pcs.S1.SUDI[10:0]
 @28
-testbench.S1.code_sync_status
+testbench.pcs.S1.code_sync_status
 @200
 -
 -
 -RECEPTOR
 @28
-testbench.R1.RX_DV
+testbench.pcs.R1.RX_DV
 @22
 [color] 2
-testbench.R1.RXD[7:0]
+testbench.pcs.R1.RXD[7:0]
 [pattern_trace] 1
 [pattern_trace] 0
 endef

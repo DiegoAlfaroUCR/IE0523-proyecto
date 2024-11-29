@@ -16,11 +16,6 @@
 // +++++++ Módulo tester +++++++
 
 module tester(
-    input code_sync_status,              // Estatus de sincronización
-    input [10:0] SUDI,                   // Señal SUDI de salida, contiene el code group y rx_even
-    input transmitting,                  // Indicación de transmisión del transmit
-    input [9:0] PUDR_PUDI,               // Comunicación en loopback  entre transmisor y sync
-
     output reg Clk,                      // Señal de reloj
     output reg mr_main_reset,            // Señal de reset
     output reg power_on,                 // Señal de encencido
@@ -40,7 +35,7 @@ module tester(
             TXD = 8'h00;
             PUDI_indicate = 0;
 
-            // Reset momentáneo al inicio para iniciar en estado
+            // Reset momentáneo
             #5 mr_main_reset = 1;
             PUDI_indicate = 1;
             #20 mr_main_reset = 0;
