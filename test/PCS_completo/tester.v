@@ -200,7 +200,7 @@ module tester(
             TX_EN =1'b0; //Se desactiva enable
     //       TXD = 8'h00;
         #100;
-            
+
         #5 $finish;
     end
 
