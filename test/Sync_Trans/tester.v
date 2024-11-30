@@ -48,35 +48,88 @@ module tester(
             TXD = 8'h00;
             PUDI_indicate = 0;
 
-            // Reset momentáneo al inicio para iniciar en estado
+            // Reset momentáneo
             #5 mr_main_reset = 1;
             PUDI_indicate = 1;
-            #10 mr_main_reset = 0;
+            #20 mr_main_reset = 0;
 
-        // ++++++++++++++++++++ Prueba #1: Operación correcta ++++++++++++++++++++
-            #60
-            TX_EN = 1'b1; //Se activa enable
-            #10
-            TXD = 8'h01;
+            // ++++++++++++++++++++ Prueba #1: Secuencia corta ++++++++++++++++++++
+            #80
+            TX_EN = 1'b1; // Se activa enable
+            #30
+            TXD = 8'hAC; // D12.5 (Nuevo)
             #10;
-            TXD = 8'h03;
+            TXD = 8'hA6; // D06.5 (Anterior)
             #10;
-            TXD = 8'h9A;
+            TXD = 8'hB5; // D21.5 (Anterior)
             #10;
-            TXD = 8'hB5;
-            #10;
-            TXD = 8'h42;
-            #10;
-            TXD = 8'h9A;
-            #10;
-            TXD = 8'hB5;
-            #10;
-            TXD = 8'h01;
-            #10;
-            TXD = 8'hC5;
-            TX_EN =1'b0; //Se desactiva enable
+            TX_EN = 1'b0; // Se desactiva enable
             TXD = 8'h00;
             #50
+
+            // ++++++++++++++++++++ Prueba #2: Secuencia combinada ++++++++++++++++++++
+            TX_EN = 1'b1; // Se activa enable
+            #30
+            TXD = 8'hB5; // D21.5 (Anterior)
+            #10;
+            TXD = 8'hA6; // D06.5 (Anterior)
+            #10;
+            TXD = 8'hB5; // D21.5 (Anterior)
+            #10;
+            TXD = 8'hA6; // D06.5 (Anterior)
+            #10;
+            TXD = 8'hB5; // D21.5 (Anterior)
+            #10;
+            TXD = 8'hAC; // D12.5 (Nuevo)
+            #10;
+            TXD = 8'hA6; // D06.5 (Anterior)
+            #10;
+            TXD = 8'h94; // D20.4 (Nuevo)
+            #10;
+            TXD = 8'hB5; // D21.5 (Anterior)
+            #10;
+            TXD = 8'hA6; // D06.5 (Anterior)
+            #10;
+            TXD = 8'hB5; // D21.5 (Anterior)
+            #10;
+            TX_EN = 1'b0; // Se desactiva enable
+            TXD = 8'h00;
+            #50
+            // ++++++++++++++++++++ Prueba #3: Secuencia extendida ++++++++++++++++++++
+            TX_EN = 1'b1; // Se activa enable
+            #30
+            TXD = 8'hA6; // D06.5 (Anterior)
+            #10;
+            TXD = 8'hB5; // D21.5 (Anterior)
+            #10;
+            TXD = 8'hC5; // D05.6 (Anterior)
+            #10;
+            TXD = 8'hAC; // D12.5 (Nuevo)
+            #10;
+            TXD = 8'h94; // D20.4 (Nuevo)
+            #10;
+            TXD = 8'h93; // D19.4 (Nuevo)
+            #10;
+            // TXD = 8'h95; // D21.4 (Nuevo)
+            // #10;
+            TXD = 8'hA6; // D06.5 (Anterior)
+            #10;
+            TXD = 8'hB5; // D21.5 (Anterior)
+            #10;
+            TXD = 8'hC5; // D05.6 (Anterior)
+            #10;
+            TXD = 8'hB5; // D21.5 (Anterior)
+            #10;
+            TXD = 8'hA6; // D06.5 (Anterior)
+            #10;
+            TXD = 8'hB5; // D21.5 (Anterior)
+            #10;
+            TX_EN = 1'b0; // Se desactiva enable
+            TXD = 8'h00;
+            #50
+
+
+
         #5 $finish;
     end
 
