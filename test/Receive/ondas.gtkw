@@ -1,0 +1,35 @@
+[*]
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Sun Dec  1 01:33:11 2024
+[*]
+[dumpfile] "/home/bryan/2S2024_G5/resultados.vcd"
+[dumpfile_mtime] "Sun Dec  1 01:28:08 2024"
+[dumpfile_size] 4252
+[savefile] "/home/bryan/2S2024_G5/test/Receive/ondas.gtkw"
+[timestart] 0
+[size] 1908 999
+[pos] 32768 32823
+*-5.420731 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] Receive_tb.
+[sst_width] 214
+[signals_width] 174
+[sst_expanded] 1
+[sst_vpaned_height] 291
+@28
+Receive_tb.uut.clk
+Receive_tb.uut.reset
+Receive_tb.uut.sync_status
+@22
+Receive_tb.uut.SUDI[10:0]
+Receive_tb.uut.SUDI_RX_Code[9:0]
+@28
+Receive_tb.uut.RX_even
+@22
+Receive_tb.uut.RXD[7:0]
+@28
+Receive_tb.uut.RX_DV
+@22
+Receive_tb.uut.current_state[7:0]
+Receive_tb.uut.next_state[7:0]
+[pattern_trace] 1
+[pattern_trace] 0
