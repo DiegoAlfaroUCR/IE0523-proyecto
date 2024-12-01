@@ -1,0 +1,34 @@
+[*]
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Sun Dec  1 00:55:42 2024
+[*]
+[dumpfile] "/home/bryan/2S2024_G5/resultados.vcd"
+[dumpfile_mtime] "Sun Dec  1 00:48:32 2024"
+[dumpfile_size] 8203
+[savefile] "/home/bryan/2S2024_G5/test/Sync_Receive/ondas.gtkw"
+[timestart] 0
+[size] 1908 999
+[pos] -1920 42
+*-5.000000 96 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] Receptor_Synchro_tb.
+[treeopen] Receptor_Synchro_tb.dut.
+[treeopen] Receptor_Synchro_tb.dut.receptor.
+[sst_width] 214
+[signals_width] 174
+[sst_expanded] 1
+[sst_vpaned_height] 292
+@28
+Receptor_Synchro_tb.dut.Clk
+Receptor_Synchro_tb.dut.mr_main_reset
+Receptor_Synchro_tb.dut.receptor.sync_status
+@22
+Receptor_Synchro_tb.dut.RXD[7:0]
+@28
+Receptor_Synchro_tb.dut.RX_DV
+@22
+Receptor_Synchro_tb.dut.receptor.SUDI_RX_Code[9:0]
+Receptor_Synchro_tb.dut.receptor.current_state[7:0]
+@29
+Receptor_Synchro_tb.dut.receptor.RX_even
+[pattern_trace] 1
+[pattern_trace] 0

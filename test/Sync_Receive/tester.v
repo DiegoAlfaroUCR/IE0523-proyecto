@@ -1,7 +1,7 @@
 `include "src/tablas.v"  // Incluir las definiciones de los códigos especiales
 `timescale 1ns/1ns
 
-`define COMMA 10'b110000_0101
+`define COMMA ~10'b110000_0101
 `define D1    10'b011000_1011
 `define D2    10'b100010_1011
 `define D3    10'b010010_1011
@@ -37,24 +37,22 @@ module tester_receptor_synchro (
             #10 PUDI = `D3;
             #10 PUDI = `D1;
             #10 PUDI = `D2;
-
-        // ++++++++++++++ Prueba #2: Desincronización y re sicnronización ++++++++++++++
-            #10 PUDI = `COMMA;
+            #20 PUDI = `COMMA;
             #10 PUDI = `D1;
             #10 PUDI = `S;
-            #20 PUDI = `DATA_CODE_D00_0_10B;
-            #20 PUDI = `DATA_CODE_D01_0_10B;
-            #20 PUDI = `DATA_CODE_D02_0_10B;
-            #20 PUDI = `DATA_CODE_D02_2_10B;
-            #20 PUDI = `DATA_CODE_D03_0_10B;
-            #20 PUDI = `DATA_CODE_D16_2_10B;
-            #20 PUDI = `DATA_CODE_D26_4_10B;
-            #20 PUDI = `DATA_CODE_D06_5_10B;
-            #20 PUDI = `DATA_CODE_D21_5_10B;
-            #20 PUDI = `DATA_CODE_D05_6_10B;
-            #20 PUDI = `SPECIAL_CODE_K29_7_10B;
-            #20 PUDI = `SPECIAL_CODE_K23_7_10B;
-            #20 PUDI = `SPECIAL_CODE_K28_5_10B;
+            #10 PUDI = `DATA_CODE_D00_0_10B;
+            #10 PUDI = `DATA_CODE_D01_0_10B;
+            #10 PUDI = `DATA_CODE_D02_0_10B;
+            #10 PUDI = `DATA_CODE_D02_2_10B;
+            #10 PUDI = `DATA_CODE_D03_0_10B;
+            #10 PUDI = `DATA_CODE_D16_2_10B;
+            #10 PUDI = `DATA_CODE_D26_4_10B;
+            #10 PUDI = `DATA_CODE_D06_5_10B;
+            #10 PUDI = `DATA_CODE_D21_5_10B;
+            #10 PUDI = `DATA_CODE_D05_6_10B;
+            #10 PUDI = `SPECIAL_CODE_K29_7_10B;
+            #10 PUDI = `SPECIAL_CODE_K23_7_10B;
+            #10 PUDI = ~`SPECIAL_CODE_K28_5_10B;
             #60 PUDI = `MALO;
         #5 $finish;
     end
