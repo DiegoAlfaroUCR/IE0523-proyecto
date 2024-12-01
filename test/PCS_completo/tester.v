@@ -2,10 +2,10 @@
  * Archivo: tester.v
  * Autor: Diego Alfaro Segura (diego.alfarosegura@ucr.ac.cr)
  *
- * Módulo de prueba.
+ * Módulo de prueba para PCS completo.
  *
  * Versión: 1
- * Fecha: //2024
+ * Fecha: 30/11/2024
  *
  * Copyright (c) 2024
  * MIT License

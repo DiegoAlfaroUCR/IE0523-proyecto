@@ -2,10 +2,11 @@
  * Archivo: IdentPUDI.v
  * Autor: Diego Alfaro Segura (diego.alfarosegura@ucr.ac.cr)
  *
- * Módulo IdentPUDI
+ * Módulo IdentPUDI: Módulo para identificar el tipo de codegroup recibido por
+ * sincronizador.
  *
  * Versión: 1
- * Fecha: //2024
+ * Fecha: 30/11/2024
  *
  * Copyright (c) 2024 Diego Alfaro Segura
  * MIT License
