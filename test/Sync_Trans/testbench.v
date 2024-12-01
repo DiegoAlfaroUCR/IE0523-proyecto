@@ -2,10 +2,10 @@
  * Archivo: testbench.v
  * Autor: Diego Alfaro Segura (diego.alfarosegura@ucr.ac.cr)
  *
- * Banco de pruebas.
+ * Banco de pruebas para unión entre transmisor y sincronizador.
  *
  * Versión: 1
- * Fecha:  //2024
+ * Fecha:  30/11/2024
  *
  * Copyright (c) 2024 Diego Alfaro Segura
  * MIT License
