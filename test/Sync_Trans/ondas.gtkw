@@ -1,11 +1,22 @@
+[*]
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Sun Dec  1 02:29:09 2024
+[*]
+[dumpfile] "/home/edgarwsl/ucr/2S2024_G5/resultados.vcd"
+[dumpfile_mtime] "Sun Dec  1 02:26:21 2024"
+[dumpfile_size] 21359
+[savefile] "/home/edgarwsl/ucr/2S2024_G5/test/Sync_Trans/ondas.gtkw"
 [timestart] 0
 [size] 1908 987
 [pos] 32767 32767
-*-3.827247 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-6.225575 -1 5 210 400 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[markername] APRUEBA 1
+[markername] BPRUEBA 2
+[markername] CPRUEBA 3
 [treeopen] testbench.
 [treeopen] testbench.S1.
 [sst_width] 42
-[signals_width] 158
+[signals_width] 181
 [sst_expanded] 0
 [sst_vpaned_height] 288
 @200
