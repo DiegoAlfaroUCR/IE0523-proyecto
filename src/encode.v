@@ -69,6 +69,10 @@ always @(*) begin
         `DATA_CODE_D06_5_8B: adjusted_code_group_10b = `DATA_CODE_D06_5_10B; // D6.5
         `DATA_CODE_D21_5_8B: adjusted_code_group_10b = `DATA_CODE_D21_5_10B; // D21.5
         `DATA_CODE_D05_6_8B: adjusted_code_group_10b = `DATA_CODE_D05_6_10B; // D5.6
+        `DATA_CODE_D19_4_8B: adjusted_code_group_10b = `DATA_CODE_D19_4_10B; // D19.4
+        `DATA_CODE_D20_4_8B: adjusted_code_group_10b = `DATA_CODE_D20_4_10B; // D20.4
+        `DATA_CODE_D21_4_8B: adjusted_code_group_10b = `DATA_CODE_D21_4_10B; // D21.4
+        `DATA_CODE_D12_5_8B: adjusted_code_group_10b = `DATA_CODE_D12_5_10B; // D12.5
     endcase
 end
 

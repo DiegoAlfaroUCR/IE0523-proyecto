@@ -92,4 +92,35 @@
     `define DATA_CODE_D05_6_8B 8'hC5  // Decimal: 197, Negado: 58
     `define DATA_CODE_D05_6_10B 10'b101001_0110  // Decimal: 678, Negado: 345
 
+    // D19.4
+    `define DATA_CODE_D19_4_8B 8'h93  // Decimal: 147, Negado: 108
+    `define DATA_CODE_D19_4_10B 10'b110010_0010  // Decimal: 786, Negado: 237
+
+    // D20.4
+    `define DATA_CODE_D20_4_8B 8'h94  // Decimal: 148, Negado: 107
+    `define DATA_CODE_D20_4_10B 10'b001011_0010  // Decimal: 178, Negado: 847
+
+    // D21.4
+    `define DATA_CODE_D21_4_8B 8'h95  // Decimal: 149, Negado: 106
+    `define DATA_CODE_D21_4_10B 10'b101010_0010  // Decimal: 674, Negado: 351
+    // D12.5
+    `define DATA_CODE_D12_5_8B 8'hAC  // Decimal: 172, Negado: 83
+    `define DATA_CODE_D12_5_10B 10'b001101_1010  // Decimal: 218, Negado: 805
+    
+    // D19.4
+    `define DATA_CODE_D19_4_8B 8'h93  // Decimal: 147, Negado: 108
+    `define DATA_CODE_D19_4_10B 10'b110010_0010  // Decimal: 786, Negado: 237
+
+    // D20.4
+    `define DATA_CODE_D20_4_8B 8'h94  // Decimal: 148, Negado: 107
+    `define DATA_CODE_D20_4_10B 10'b001011_0010  // Decimal: 178, Negado: 847
+
+    // D21.4
+    `define DATA_CODE_D21_4_8B 8'h95  // Decimal: 149, Negado: 106
+    `define DATA_CODE_D21_4_10B 10'b101010_0010  // Decimal: 674, Negado: 351
+    // D12.5
+    `define DATA_CODE_D12_5_8B 8'hAC  // Decimal: 172, Negado: 83
+    `define DATA_CODE_D12_5_10B 10'b001101_1010  // Decimal: 218, Negado: 805
+
+
 `endif // Fin de la guarda de inclusión
